@@ -1,43 +1,41 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import { getAccessToken, clearTokens } from "./auth";
 
-// Base URL read from .env.local — single source of truth.
-// Falls back to localhost so the app still works if env is missing.
-const baseURL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api/v1";
+const baseURL =
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api/v1";
 
-// Create a configured Axios instance.
-// Using an instance (not the global axios) lets us attach interceptors
-// without polluting other parts of the app.
+/**
+ * Configured Axios instance. Reused everywhere.
+ * Java analogy: like an `@Autowired` RestTemplate with defaults baked in.
+ */
 export const api = axios.create({
   baseURL,
-  timeout: 10_000, // 10s — fail fast instead of hanging forever
-  headers: {
-    "Content-Type": "application/json",
-  },
+  timeout: 10_000,
+  headers: { "Content-Type": "application/json" },
 });
 
-// ---- Request interceptor ----
-// Runs BEFORE every request. We'll attach the JWT here later.
-// For now it's a no-op so you can see where the logic goes.
+/* ---------------- Request interceptor ---------------- */
+// Attaches the JWT to every request if we have one.
 api.interceptors.request.use(
   (config) => {
-    // TODO: attach Bearer token once we have login working
-    // const token = localStorage.getItem("access_token");
-    // if (token) config.headers.Authorization = `Bearer ${token}`;
+    const token = getAccessToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// ---- Response interceptor ----
-// Runs AFTER every response. Two jobs:
-//  1. Unwrap the backend's { payload, message, code, error } envelope
-//  2. Surface errors in a consistent way
+/* ---------------- Response interceptor ---------------- */
+// Future: handle 401 (clear tokens + redirect to /login).
 api.interceptors.response.use(
-  (response) => response, // pass-through for now; we'll unwrap later
-  (error) => {
-    // Network down, timeout, 5xx, 4xx — all land here.
-    // Log for now; later we'll route 401 → redirect to /login.
-    console.error("[api] error:", error.message);
+  (response) => response,
+  (error: AxiosError) => {
+    if (error.response?.status === 401) {
+      // Token expired or invalid — wipe and let the page handle redirect.
+      clearTokens();
+    }
     return Promise.reject(error);
   }
 );

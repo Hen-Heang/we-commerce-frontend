@@ -1,48 +1,60 @@
 "use client";
 
-import { useState } from "react";
-import { api } from "@/lib/api";
+import Link from "next/link";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Logo } from "@/components/brand/Logo";
+import { isAuthenticated } from "@/lib/auth";
 
+/**
+ * Landing page (`/`).
+ *
+ * Behavior:
+ *   - If already logged in → bounce to /market
+ *   - Otherwise → show welcome + Log in / Register buttons
+ */
 export default function Home() {
-  const [result, setResult] = useState<string>("(not called yet)");
-  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  async function testConnection() {
-    setLoading(true);
-    setResult("calling...");
-    try {
-      // Hits POST /api/v1/auth/loginPhoneNumber/0000
-      // We expect an error response from backend — that's fine,
-      // it proves frontend → backend connectivity + CORS works.
-      const res = await api.post("/auth/loginPhoneNumber/0000");
-      setResult(JSON.stringify(res.data, null, 2));
-    } catch (err: unknown) {
-      // Even errors are good — we just want to see a response.
-      const message = err instanceof Error ? err.message : String(err);
-      setResult(`ERROR: ${message}`);
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    if (isAuthenticated()) {
+      router.replace("/market");
     }
-  }
+  }, [router]);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-8">
-      <h1 className="text-3xl font-bold">EasyCart — Connection Test</h1>
-      <p className="text-sm text-zinc-500">
-        API base: {process.env.NEXT_PUBLIC_API_URL}
-      </p>
+    <main className="min-h-dvh bg-gradient-to-br from-indigo-50 via-white to-zinc-50">
+      <div className="mx-auto flex min-h-dvh max-w-2xl flex-col items-center justify-center gap-8 px-6 py-12">
+        <Logo className="scale-125 mb-4" />
+        <div className="text-center space-y-3 max-w-md">
+          <h1 className="text-4xl font-bold tracking-tight text-zinc-900 sm:text-5xl">
+            The next generation of <span className="text-indigo-600">local commerce.</span>
+          </h1>
+          <p className="text-lg text-zinc-600">
+            Shop, save, and sell — all in one modern marketplace designed for your community.
+          </p>
+        </div>
 
-      <button
-        onClick={testConnection}
-        disabled={loading}
-        className="rounded-full bg-black px-6 py-3 text-white disabled:opacity-50 dark:bg-white dark:text-black"
-      >
-        {loading ? "Testing..." : "Test backend connection"}
-      </button>
-
-      <pre className="max-w-xl whitespace-pre-wrap break-words rounded-lg bg-zinc-100 p-4 text-sm dark:bg-zinc-900">
-        {result}
-      </pre>
+        <div className="flex w-full max-w-sm flex-col gap-4">
+          <Link
+            href="/login"
+            className="rounded-2xl bg-indigo-600 px-6 py-4 text-center text-lg font-bold text-white shadow-xl shadow-indigo-200 transition-all hover:bg-indigo-700 hover:scale-[1.02] active:scale-[0.98]"
+          >
+            Sign In
+          </Link>
+          <Link
+            href="/register"
+            className="rounded-2xl border border-zinc-200 bg-white px-6 py-4 text-center text-lg font-semibold text-zinc-800 shadow-sm transition-all hover:bg-zinc-50 hover:border-zinc-300"
+          >
+            Create an account
+          </Link>
+        </div>
+        
+        <div className="mt-12 flex items-center gap-8 opacity-50 grayscale contrast-125">
+          {/* Mock partners/trust badges */}
+          <div className="text-xs font-bold uppercase tracking-widest text-zinc-400">Trusted by local sellers</div>
+        </div>
+      </div>
     </main>
   );
 }
