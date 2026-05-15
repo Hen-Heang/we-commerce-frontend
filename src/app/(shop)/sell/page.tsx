@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -11,12 +11,18 @@ import {
   TrendingUp,
   ImageIcon,
   X,
+  Store,
+  Sparkles,
+  ArrowRight,
 } from "lucide-react";
 
 import { fetchAllCategories, createProduct } from "@/lib/products";
+import { fetchUserProfile } from "@/lib/user";
 import { resolvePhotoUrl } from "@/lib/image";
 import type { ProductCreateRequest, Product } from "@/types/api";
 import { MOCK_PRODUCTS } from "@/lib/mockData";
+import { useShopStore } from "@/store/shopStore";
+import { OpenShopModal } from "@/components/shop/OpenShopModal";
 
 /**
  * Seller Dashboard.
@@ -32,6 +38,35 @@ import { MOCK_PRODUCTS } from "@/lib/mockData";
 
 export default function SellDashboardPage() {
   const [modalOpen, setModalOpen] = useState(false);
+  const [openShopOpen, setOpenShopOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const isShopOpen = useShopStore((s) => s.isShopOpen);
+  const shopName = useShopStore((s) => s.shopName);
+
+  const profileQuery = useQuery({
+    queryKey: ["user-profile"],
+    queryFn: fetchUserProfile,
+  });
+
+  // Wait until Zustand persist hydrates before deciding what to render.
+  // Otherwise the dashboard would briefly flash before the onboarding card.
+  if (!mounted) return null;
+
+  // First-time experience: user hasn't opened their shop yet.
+  if (!isShopOpen) {
+    return (
+      <>
+        <OnboardingHero onOpen={() => setOpenShopOpen(true)} />
+        <OpenShopModal
+          open={openShopOpen}
+          onClose={() => setOpenShopOpen(false)}
+          currentProfile={profileQuery.data}
+        />
+      </>
+    );
+  }
 
   // For the demo, "my listings" reuses MOCK_PRODUCTS as the seller's
   // hypothetical inventory. In production this hits /item/allItemSelling.
@@ -47,11 +82,15 @@ export default function SellDashboardPage() {
     <div className="max-w-6xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div className="space-y-1">
+          <p className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-indigo-500">
+            <Store className="size-3.5" strokeWidth={3} />
+            Your shop
+          </p>
           <h1 className="text-4xl font-black tracking-tight text-zinc-950">
-            Seller Center
+            {shopName ?? "Seller Center"}
           </h1>
-          <p className="text-base font-medium text-zinc-400 uppercase tracking-widest text-[10px]">
-            Manage your listings, track sales, post new products
+          <p className="text-sm font-medium text-zinc-500">
+            Manage your listings, track sales, post new products.
           </p>
         </div>
         <button
@@ -159,6 +198,89 @@ export default function SellDashboardPage() {
       </section>
 
       <CreateProductModal open={modalOpen} onClose={() => setModalOpen(false)} />
+    </div>
+  );
+}
+
+/* ============================================================
+ * Onboarding hero — first-time experience before opening a shop
+ * ============================================================ */
+function OnboardingHero({ onOpen }: { onOpen: () => void }) {
+  const benefits = [
+    "Reach buyers across the marketplace",
+    "Track active listings and sales in one place",
+    "Set your own price, condition, and shipping",
+  ];
+
+  return (
+    <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-900 p-8 text-white shadow-2xl shadow-indigo-200 sm:p-12">
+        {/* Decorative glow */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-20 -top-20 size-72 rounded-full bg-white/10 blur-3xl"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -bottom-16 -left-16 size-56 rounded-full bg-indigo-300/20 blur-3xl"
+        />
+
+        <div className="relative max-w-2xl">
+          <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[10px] font-black uppercase tracking-widest ring-1 ring-white/30 backdrop-blur-sm">
+            <Sparkles className="size-3" />
+            Become a seller
+          </span>
+          <h1 className="mt-4 text-3xl font-black tracking-tight sm:text-5xl">
+            Start selling on We&nbsp;Commerce
+          </h1>
+          <p className="mt-3 text-base text-indigo-100/90 sm:text-lg">
+            Open your shop in 30 seconds. Pick a name, then list your first product.
+          </p>
+
+          <ul className="mt-6 space-y-2">
+            {benefits.map((b) => (
+              <li
+                key={b}
+                className="flex items-start gap-3 text-sm font-medium text-indigo-50"
+              >
+                <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-white/20 ring-1 ring-white/30">
+                  <span className="size-2 rounded-full bg-white" />
+                </span>
+                {b}
+              </li>
+            ))}
+          </ul>
+
+          <button
+            onClick={onOpen}
+            className="mt-8 inline-flex items-center gap-2 rounded-2xl bg-white px-6 py-3.5 text-sm font-black text-indigo-700 shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+          >
+            <Store className="size-5" strokeWidth={2.5} />
+            Open my shop
+            <ArrowRight className="size-4" />
+          </button>
+        </div>
+      </section>
+
+      {/* Secondary card explaining what happens after */}
+      <section className="mt-6 grid gap-4 sm:grid-cols-3">
+        {[
+          { icon: Tag, title: "1. Open your shop", text: "Pick a name buyers will see." },
+          { icon: Plus, title: "2. List a product", text: "Title, price, photo, category." },
+          { icon: TrendingUp, title: "3. Start selling", text: "Buyers can order right away." },
+        ].map(({ icon: Icon, title, text }) => (
+          <div
+            key={title}
+            className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-zinc-200/50"
+          >
+            <span className="grid size-10 place-items-center rounded-xl bg-indigo-50 text-indigo-600">
+              <Icon className="size-5" strokeWidth={2.25} />
+            </span>
+            <p className="mt-3 text-sm font-black text-zinc-950">{title}</p>
+            <p className="mt-0.5 text-xs text-zinc-500">{text}</p>
+          </div>
+        ))}
+      </section>
     </div>
   );
 }

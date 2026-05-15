@@ -11,6 +11,7 @@ import { fetchUserProfile, updateUserProfile, deleteUserAccount } from "@/lib/us
 import { fetchAddresses, deleteAddress } from "@/lib/addresses";
 import { fetchAllCategories, createProduct } from "@/lib/products";
 import { useCartStore } from "@/store/cartStore";
+import { useShopStore } from "@/store/shopStore";
 import { clearTokens } from "@/lib/auth";
 import { ConfirmDialog } from "@/components/shop/ConfirmDialog";
 import { SavedPaymentMethodsList } from "@/components/shop/SavedPaymentMethodsList";
@@ -588,6 +589,14 @@ function SectionSkeleton({ title }: { title: string }) {
  * always reach the seller dashboard from their profile.
  * ============================================================ */
 function SellerCard() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const isShopOpen = useShopStore((s) => s.isShopOpen);
+  const shopName = useShopStore((s) => s.shopName);
+
+  // Show "Start selling..." copy until Zustand hydrates to avoid SSR flicker
+  const opened = mounted && isShopOpen;
+
   return (
     <Link
       href="/sell"
@@ -609,17 +618,19 @@ function SellerCard() {
         </span>
         <div className="flex-1 min-w-0">
           <p className="text-[10px] font-black uppercase tracking-widest text-indigo-200">
-            Seller Center
+            {opened ? "Your shop" : "Seller Center"}
           </p>
-          <p className="mt-1 text-xl font-black tracking-tight">
-            Start selling on We Commerce
+          <p className="mt-1 truncate text-xl font-black tracking-tight">
+            {opened ? shopName : "Start selling on We Commerce"}
           </p>
           <p className="mt-0.5 text-sm text-indigo-100/90">
-            List new products, track your sales, manage inventory.
+            {opened
+              ? "Manage listings, track sales, post new products."
+              : "Open your shop in 30 seconds — list your first product."}
           </p>
         </div>
         <span className="hidden shrink-0 items-center gap-1 rounded-2xl bg-white/15 px-4 py-2 text-sm font-bold backdrop-blur-sm transition-transform group-hover:translate-x-1 sm:inline-flex">
-          Open
+          {opened ? "Manage" : "Open"}
           <ArrowRight className="size-4" />
         </span>
         <ArrowRight className="size-5 shrink-0 transition-transform group-hover:translate-x-1 sm:hidden" />
