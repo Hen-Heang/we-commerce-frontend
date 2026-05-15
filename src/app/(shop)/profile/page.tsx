@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Pencil, MapPin, Plus, Trash2, LogOut, ShieldAlert, Save, User as UserIcon, Package, Wallet } from "lucide-react";
+import Link from "next/link";
+import { Pencil, MapPin, Plus, Trash2, LogOut, ShieldAlert, Save, User as UserIcon, Package, Wallet, Store, ArrowRight } from "lucide-react";
 
 import { fetchUserProfile, updateUserProfile, deleteUserAccount } from "@/lib/user";
 import { fetchAddresses, deleteAddress } from "@/lib/addresses";
@@ -76,6 +77,8 @@ export default function ProfilePage() {
           profile={profileQuery.data}
           loading={profileQuery.isLoading}
         />
+
+        <SellerCard />
 
         <AddressesSection
           addresses={addressesQuery.data}
@@ -579,6 +582,52 @@ function SectionSkeleton({ title }: { title: string }) {
 /* ============================================================
  * Payment methods section
  * ============================================================ */
+/* ============================================================
+ * Seller card — prominent CTA pointing at /sell
+ * Visible on every device size (no md:hidden) so mobile users can
+ * always reach the seller dashboard from their profile.
+ * ============================================================ */
+function SellerCard() {
+  return (
+    <Link
+      href="/sell"
+      className="group relative block overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 to-indigo-800 p-6 text-white shadow-xl shadow-indigo-200 transition-transform hover:scale-[1.01] active:scale-[0.99]"
+    >
+      {/* Decorative glow */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-12 -top-12 size-48 rounded-full bg-white/10 blur-2xl"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-8 -left-8 size-32 rounded-full bg-indigo-300/20 blur-2xl"
+      />
+
+      <div className="relative flex items-center gap-4">
+        <span className="grid size-14 shrink-0 place-items-center rounded-2xl bg-white/15 backdrop-blur-sm ring-1 ring-white/30">
+          <Store className="size-7" strokeWidth={2.25} />
+        </span>
+        <div className="flex-1 min-w-0">
+          <p className="text-[10px] font-black uppercase tracking-widest text-indigo-200">
+            Seller Center
+          </p>
+          <p className="mt-1 text-xl font-black tracking-tight">
+            Start selling on We Commerce
+          </p>
+          <p className="mt-0.5 text-sm text-indigo-100/90">
+            List new products, track your sales, manage inventory.
+          </p>
+        </div>
+        <span className="hidden shrink-0 items-center gap-1 rounded-2xl bg-white/15 px-4 py-2 text-sm font-bold backdrop-blur-sm transition-transform group-hover:translate-x-1 sm:inline-flex">
+          Open
+          <ArrowRight className="size-4" />
+        </span>
+        <ArrowRight className="size-5 shrink-0 transition-transform group-hover:translate-x-1 sm:hidden" />
+      </div>
+    </Link>
+  );
+}
+
 function PaymentMethodsSection() {
   return (
     <section className="rounded-3xl bg-white p-8 shadow-sm ring-1 ring-zinc-200/50">
