@@ -8,15 +8,15 @@ import { useCartStore } from "@/store/cartStore";
 import { useShopStore } from "@/store/shopStore";
 
 /**
- * Mobile bottom navigation — iOS 26 "Liquid Glass" floating tab bar.
+ * Mobile bottom navigation — Telegram-iOS / iOS 26 hybrid.
  *
- * Design notes (matching Apple's iOS 26 / iPadOS 26 spec):
- *   - Floating pill (not edge-to-edge) with safe-area-aware margin
- *   - Heavy backdrop-blur + saturate for the refractive glass feel
- *   - Inner top highlight (white 1px) suggesting a glass edge catching light
- *   - Subtle elevated shadow underneath (the bar appears to hover)
- *   - Active tab gets its own glass-pill that "lifts" with brighter accent
- *   - Selection transition is smooth (300ms) — no harsh state changes
+ * Design rationale (matching Telegram and Apple's first-party apps):
+ *   - Floating glass pill (preserved from iOS 26 Liquid Glass spec)
+ *   - Active tab is signalled ONLY by color and weight, not by a colored
+ *     background pill. Stacking color + pill + shadow + scale fights the
+ *     glass effect and looks "too much".
+ *   - One emerald micro-dot indicates "shop active" — small and clean.
+ *   - Cart count badge is a flat color chip with no thick ring.
  *
  * Hidden on md+ where the top Navbar handles all destinations.
  */
@@ -33,18 +33,14 @@ export function BottomNav() {
     label: string;
     icon: typeof Home;
     badge?: number;
-    /** True for the Sell tab once shop is open — gets a brand-colored highlight. */
     accent?: boolean;
   };
 
   /**
-   * The tab set adapts to seller state:
-   *   - Before opening a shop: Home · Saved · Cart · Orders · Profile
-   *   - After opening:         Home · Saved · Cart · Shop   · Profile
-   *
-   * Swap Orders → Shop because active sellers care more about managing listings
-   * than reviewing past orders (still reachable from Profile dropdown / nav menu).
-   * Wait until Zustand persist hydrates before flipping to avoid SSR flash.
+   * Tab set adapts to seller state:
+   *   - Default: Home · Saved · Cart · Orders · Profile
+   *   - Shop open: Home · Saved · Cart · Shop   · Profile
+   * Wait for hydration so SSR + initial render match.
    */
   const items: NavItem[] = mounted && isShopOpen
     ? [
@@ -73,22 +69,23 @@ export function BottomNav() {
           pointer-events-auto
           mx-auto max-w-lg
           glass squircle-xl
-          relative overflow-hidden
-          shadow-[0_12px_40px_-12px_rgba(0,0,0,0.15)]
+          relative
+          shadow-[0_8px_28px_-12px_rgba(0,0,0,0.12)]
         "
       >
-        {/* Luminous accent — subtle top light */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent"
-        />
-
-        <ul className="relative flex items-stretch justify-around px-2 py-2">
+        <ul className="relative flex items-stretch justify-around px-2 py-1.5">
           {items.map(({ href, label, icon: Icon, badge, accent }) => {
             const active =
               pathname === href ||
               (href === "/market" && pathname?.startsWith("/market")) ||
               (href === "/sell" && pathname?.startsWith("/sell"));
+
+            // Single color decision — applied to icon + label.
+            const color = active
+              ? "text-primary"
+              : accent
+              ? "text-zinc-700"
+              : "text-zinc-500";
 
             return (
               <li key={href} className="flex-1">
@@ -96,39 +93,30 @@ export function BottomNav() {
                   href={href}
                   aria-label={label}
                   aria-current={active ? "page" : undefined}
-                  className={`tap-bounce flex flex-col items-center gap-1 rounded-2xl py-1 text-[10px] font-bold tracking-tight transition-all duration-300 ${
-                    active ? "text-primary" : accent ? "text-primary/80" : "text-zinc-500"
-                  }`}
+                  className={`tap-bounce flex flex-col items-center gap-1 rounded-2xl px-1 py-1.5 transition-colors duration-200 ${color}`}
                 >
-                  <span
-                    className={`relative flex h-10 w-14 items-center justify-center rounded-2xl transition-all duration-300 ease-out ${
-                      active
-                        ? "bg-primary/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] scale-105"
-                        : ""
-                    }`}
-                  >
+                  <span className="relative flex h-7 items-center justify-center">
                     <Icon
-                      className={`size-[1.25rem] transition-all duration-300 ${
-                        active ? "scale-110" : ""
-                      }`}
-                      strokeWidth={active ? 2.5 : 2}
+                      className="size-[1.4rem]"
+                      strokeWidth={active ? 2.4 : 1.9}
                     />
+                    {/* Cart count badge — flat, no fat ring */}
                     {label === "Cart" && mounted && (badge ?? 0) > 0 && (
-                      <span className="absolute -right-0.5 -top-0.5 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-black leading-none text-white shadow-lg ring-2 ring-white">
+                      <span className="absolute -right-2 -top-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold leading-none text-white">
                         {(badge ?? 0) > 99 ? "99+" : badge}
                       </span>
                     )}
-                    {/* Shop-active pulse dot on the Shop tab */}
+                    {/* Shop-active dot — tiny, only when shop tab is NOT current */}
                     {accent && !active && (
                       <span
                         aria-hidden
-                        className="absolute right-2 top-1.5 size-1.5 rounded-full bg-emerald-500 ring-2 ring-white"
+                        className="absolute -right-1.5 -top-0.5 size-1.5 rounded-full bg-emerald-500"
                       />
                     )}
                   </span>
                   <span
-                    className={`transition-all duration-400 ${
-                      active ? "opacity-100 translate-y-0" : "opacity-60 translate-y-0.5"
+                    className={`text-[10px] tracking-tight transition-all duration-200 ${
+                      active ? "font-semibold" : "font-medium"
                     }`}
                   >
                     {label}
