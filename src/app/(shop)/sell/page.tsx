@@ -182,6 +182,11 @@ function CreateProductModal({
     codition: "",
     brand: "",
     photo: [],
+    // Backend's ProductServiceImp does `discountValues < 0` and
+    // `discountType == true` without null checks → NPE if these are missing.
+    // Send safe defaults so the request succeeds.
+    discountValues: 0,
+    discountType: false,
   };
 
   const [form, setForm] = useState<ProductCreateRequest>(emptyForm);
