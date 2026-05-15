@@ -33,8 +33,8 @@ export function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-30 border-b border-zinc-200 bg-white/80 backdrop-blur-md">
-      <div className="mx-auto flex h-20 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-30 border-b border-zinc-100 bg-white/90 backdrop-blur-xl shadow-sm shadow-zinc-100/80">
+      <div className="mx-auto flex h-14 max-w-7xl items-center gap-3 px-4 sm:h-16 sm:px-6 lg:px-8">
         {/* Brand */}
         <Link href="/market" className="shrink-0 transition-transform hover:scale-105 active:scale-95">
           <Logo className="text-xl" />
@@ -43,15 +43,15 @@ export function Navbar() {
         {/* Search — grows on desktop, hidden on mobile */}
         <form
           onSubmit={onSearchSubmit}
-          className="ml-6 hidden flex-1 max-w-xl md:flex"
+          className="ml-4 hidden flex-1 max-w-xl md:flex"
         >
           <div className="relative w-full group">
-            <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-zinc-400 group-focus-within:text-indigo-600 transition-colors" />
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-zinc-400 group-focus-within:text-indigo-600 transition-colors" />
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search products, sellers..."
-              className="w-full rounded-2xl border border-zinc-300 bg-white py-2.5 pl-11 pr-4 text-sm text-zinc-950 placeholder:text-zinc-400 outline-none ring-indigo-500/20 transition-all focus:border-indigo-600 focus:ring-4"
+              className="w-full rounded-full border border-zinc-200 bg-zinc-50 py-2.5 pl-10 pr-4 text-sm text-zinc-950 placeholder:text-zinc-400 outline-none transition-all focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10"
             />
           </div>
         </form>
@@ -111,14 +111,14 @@ export function Navbar() {
       </div>
 
       {/* Mobile search */}
-      <form onSubmit={onSearchSubmit} className="border-t border-zinc-100 px-4 py-3 md:hidden">
+      <form onSubmit={onSearchSubmit} className="border-t border-zinc-100 px-4 py-2.5 md:hidden">
         <div className="relative group">
-          <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-zinc-400 group-focus-within:text-indigo-600 transition-colors" />
+          <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-zinc-400 group-focus-within:text-indigo-600 transition-colors" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search products..."
-            className="w-full rounded-xl border border-zinc-300 bg-white py-2.5 pl-11 pr-4 text-sm text-zinc-950 placeholder:text-zinc-400 outline-none focus:border-indigo-600 transition-all"
+            className="w-full rounded-full border border-zinc-200 bg-zinc-50 py-2.5 pl-10 pr-4 text-sm text-zinc-950 placeholder:text-zinc-400 outline-none transition-all focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10"
           />
         </div>
       </form>
