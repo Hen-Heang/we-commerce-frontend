@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   title: "We Commerce — Shop, save, and sell",
   description:
     "We Commerce is a multi-vendor marketplace. Browse, save, and purchase products from sellers around you.",
-  manifest: "/manifest.json",
+  manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
