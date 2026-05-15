@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Home, Heart, ShoppingBag, User, Package } from "lucide-react";
+import { Home, Heart, ShoppingBag, User, Package, Store } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
+import { useShopStore } from "@/store/shopStore";
 
 /**
  * Mobile bottom navigation — iOS 26 "Liquid Glass" floating tab bar.
@@ -25,20 +26,41 @@ export function BottomNav() {
   useEffect(() => setMounted(true), []);
 
   const cartCount = useCartStore((s) => s.totalQuantity());
+  const isShopOpen = useShopStore((s) => s.isShopOpen);
 
   type NavItem = {
     href: string;
     label: string;
     icon: typeof Home;
     badge?: number;
+    /** True for the Sell tab once shop is open — gets a brand-colored highlight. */
+    accent?: boolean;
   };
-  const items: NavItem[] = [
-    { href: "/market", label: "Home", icon: Home },
-    { href: "/saved", label: "Saved", icon: Heart },
-    { href: "/cart", label: "Cart", icon: ShoppingBag, badge: cartCount },
-    { href: "/orders", label: "Orders", icon: Package },
-    { href: "/profile", label: "Profile", icon: User },
-  ];
+
+  /**
+   * The tab set adapts to seller state:
+   *   - Before opening a shop: Home · Saved · Cart · Orders · Profile
+   *   - After opening:         Home · Saved · Cart · Shop   · Profile
+   *
+   * Swap Orders → Shop because active sellers care more about managing listings
+   * than reviewing past orders (still reachable from Profile dropdown / nav menu).
+   * Wait until Zustand persist hydrates before flipping to avoid SSR flash.
+   */
+  const items: NavItem[] = mounted && isShopOpen
+    ? [
+        { href: "/market", label: "Home", icon: Home },
+        { href: "/saved", label: "Saved", icon: Heart },
+        { href: "/cart", label: "Cart", icon: ShoppingBag, badge: cartCount },
+        { href: "/sell", label: "Shop", icon: Store, accent: true },
+        { href: "/profile", label: "Profile", icon: User },
+      ]
+    : [
+        { href: "/market", label: "Home", icon: Home },
+        { href: "/saved", label: "Saved", icon: Heart },
+        { href: "/cart", label: "Cart", icon: ShoppingBag, badge: cartCount },
+        { href: "/orders", label: "Orders", icon: Package },
+        { href: "/profile", label: "Profile", icon: User },
+      ];
 
   return (
     <div
@@ -62,10 +84,11 @@ export function BottomNav() {
         />
 
         <ul className="relative flex items-stretch justify-around px-2 py-2">
-          {items.map(({ href, label, icon: Icon, badge }) => {
+          {items.map(({ href, label, icon: Icon, badge, accent }) => {
             const active =
               pathname === href ||
-              (href === "/market" && pathname?.startsWith("/market"));
+              (href === "/market" && pathname?.startsWith("/market")) ||
+              (href === "/sell" && pathname?.startsWith("/sell"));
 
             return (
               <li key={href} className="flex-1">
@@ -74,7 +97,7 @@ export function BottomNav() {
                   aria-label={label}
                   aria-current={active ? "page" : undefined}
                   className={`tap-bounce flex flex-col items-center gap-1 rounded-2xl py-1 text-[10px] font-bold tracking-tight transition-all duration-300 ${
-                    active ? "text-primary" : "text-zinc-500"
+                    active ? "text-primary" : accent ? "text-primary/80" : "text-zinc-500"
                   }`}
                 >
                   <span
@@ -94,6 +117,13 @@ export function BottomNav() {
                       <span className="absolute -right-0.5 -top-0.5 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-black leading-none text-white shadow-lg ring-2 ring-white">
                         {(badge ?? 0) > 99 ? "99+" : badge}
                       </span>
+                    )}
+                    {/* Shop-active pulse dot on the Shop tab */}
+                    {accent && !active && (
+                      <span
+                        aria-hidden
+                        className="absolute right-2 top-1.5 size-1.5 rounded-full bg-emerald-500 ring-2 ring-white"
+                      />
                     )}
                   </span>
                   <span

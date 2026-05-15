@@ -57,7 +57,7 @@ export function NewCollectionModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/20 p-4 backdrop-blur-sm transition-all animate-in fade-in duration-300"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-zinc-950/20 p-4 backdrop-blur-sm transition-all animate-in fade-in duration-300"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
