@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# We Commerce — Frontend
 
-## Getting Started
+A multi-vendor marketplace web app built with **Next.js 16 + TypeScript + Tailwind v4**.
 
-First, run the development server:
+> Backend repo: https://github.com/Hen-Heang/we-commerce-api
+
+---
+
+## Quick start
 
 ```bash
+# 1. install deps
+npm install
+
+# 2. start backend first (separate terminal, port 8080)
+#    see ../we-commerce-api-main
+
+# 3. run frontend
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# → http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The app falls back to mock data when the API is empty or unreachable, so it's demoable out of the box.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## What's in here
 
-## Learn More
+12 routes (auth, market, product detail, saved, collections, cart, checkout, orders, profile) with:
 
-To learn more about Next.js, take a look at the following resources:
+- JWT auth via Axios interceptor
+- TanStack Query for server state (with optimistic updates on bookmarks)
+- Zustand + persist for cart and saved payment methods
+- React Hook Form + Zod for forms
+- Responsive: desktop top nav + mobile bottom nav
+- Simulated ABA Pay / KHQR / Card payment sheets
+- Order history with status timeline
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Full documentation
 
-## Deploy on Vercel
+📖 **[PROJECT_GUIDE.md](./PROJECT_GUIDE.md)** — complete walkthrough of architecture, API design, request lifecycles, data flow, and end-to-end use cases. Read this if you're picking up the project.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Tech stack
+
+| Concern | Tool |
+|---|---|
+| Framework | Next.js 16 (App Router, Turbopack) |
+| Language | TypeScript (strict) |
+| Styling | Tailwind v4 |
+| Server state | TanStack Query |
+| Client state | Zustand (with persist middleware) |
+| Forms | React Hook Form + Zod |
+| HTTP | Axios |
+| Icons | lucide-react |
+| Toasts | sonner |
+
+## Scripts
+
+```bash
+npm run dev     # dev server with hot reload
+npm run build   # production build
+npm run start   # serve production build
+npm run lint    # eslint
+```
+
+## Environment
+
+`.env.local` (gitignored):
+
+```
+NEXT_PUBLIC_API_URL=http://localhost:8080/api/v1
+NEXT_PUBLIC_DISABLE_MOCK=false
+```
+
+---
+
+Built by [Hen Heang](https://github.com/Hen-Heang) — Cambodian full-stack dev based in Seoul.
