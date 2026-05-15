@@ -93,7 +93,7 @@ function MarketPageInner() {
       )}
 
       <section>
-        <h2 className="mb-4 text-lg font-semibold text-zinc-900">{heading}</h2>
+        <h2 className="mb-4 text-xl font-black tracking-tight text-zinc-950">{heading}</h2>
 
         {mainQuery.isLoading && <Grid skeletonCount={8} />}
 
@@ -116,6 +116,7 @@ function MarketPageInner() {
             ))}
           </div>
         )}
+
       </section>
     </div>
   );
@@ -134,15 +135,16 @@ function PopularStrip({
 
   return (
     <section>
-      <div className="mb-3 flex items-baseline justify-between">
-        <h2 className="text-lg font-semibold text-zinc-900">Popular right now</h2>
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="text-xl font-black tracking-tight text-zinc-950">Popular right now</h2>
+        <span className="text-xs font-bold text-indigo-500 uppercase tracking-wider">Trending</span>
       </div>
-      <div className="flex gap-3 overflow-x-auto pb-2">
+      <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
         {loading
           ? Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
-                className="h-48 w-40 shrink-0 animate-pulse rounded-2xl bg-zinc-200"
+                className="h-52 w-40 shrink-0 animate-pulse rounded-2xl bg-zinc-200"
               />
             ))
           : products.slice(0, 10).map((p) => (

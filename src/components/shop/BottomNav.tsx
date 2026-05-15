@@ -37,30 +37,36 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Primary"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-zinc-100 bg-white/80 backdrop-blur-lg md:hidden shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.1)]"
-      // safe-area padding for iPhone home indicator area
-      style={{ paddingBottom: "env(safe-area-inset-bottom, 12px)", paddingTop: "8px" }}
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-zinc-100/80 bg-white/95 backdrop-blur-xl md:hidden"
+      style={{ paddingBottom: "env(safe-area-inset-bottom, 8px)", paddingTop: "6px" }}
     >
-      <ul className="mx-auto flex max-w-md items-stretch justify-around px-2">
+      <ul className="mx-auto flex max-w-lg items-stretch justify-around px-1">
         {items.map(({ href, label, icon: Icon, badge }) => {
           const active =
             pathname === href ||
             (href === "/market" && pathname?.startsWith("/market"));
 
           return (
-            <li key={href} className="flex-1 px-1">
+            <li key={href} className="flex-1">
               <Link
                 href={href}
                 aria-label={label}
                 aria-current={active ? "page" : undefined}
-                className={`flex flex-col items-center gap-1 rounded-xl py-2 text-[10px] font-bold uppercase tracking-tighter transition-all duration-300 ${
-                  active ? "text-indigo-600 bg-indigo-50/50" : "text-zinc-400 hover:text-zinc-600"
+                className={`flex flex-col items-center gap-0.5 py-1.5 text-[10px] font-bold uppercase tracking-tight transition-colors duration-200 ${
+                  active ? "text-indigo-600" : "text-zinc-400"
                 }`}
               >
-                <span className="relative">
-                  <Icon className={`size-5 transition-transform duration-300 ${active ? "scale-110" : ""}`} strokeWidth={active ? 2.5 : 2} />
+                <span
+                  className={`relative flex h-8 w-12 items-center justify-center rounded-2xl transition-all duration-300 ${
+                    active ? "bg-indigo-50 scale-105" : ""
+                  }`}
+                >
+                  <Icon
+                    className={`size-[1.125rem] transition-all duration-300 ${active ? "scale-110" : ""}`}
+                    strokeWidth={active ? 2.5 : 2}
+                  />
                   {label === "Cart" && mounted && (badge ?? 0) > 0 && (
-                    <span className="absolute -right-2.5 -top-1.5 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-indigo-600 px-1 text-[10px] font-black leading-none text-white shadow-sm ring-2 ring-white">
+                    <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-indigo-600 px-0.5 text-[9px] font-black leading-none text-white ring-2 ring-white">
                       {(badge ?? 0) > 99 ? "99+" : badge}
                     </span>
                   )}

@@ -13,9 +13,9 @@
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-dvh bg-gradient-to-br from-indigo-50 via-white to-zinc-50">
-      <div className="mx-auto flex min-h-dvh max-w-md flex-col px-6 py-12 sm:justify-center lg:py-20 animate-in fade-in duration-700">
-        <div className="w-full rounded-[2.5rem] bg-white/40 p-1 backdrop-blur-sm sm:shadow-2xl sm:shadow-indigo-100/50">
-          <div className="rounded-[2.25rem] bg-white px-8 py-12 shadow-sm">
+      <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 py-8 sm:justify-center sm:px-6 sm:py-12 lg:py-20 animate-in fade-in duration-500">
+        <div className="w-full rounded-3xl bg-white/50 p-1 backdrop-blur-sm sm:shadow-2xl sm:shadow-indigo-100/60">
+          <div className="rounded-[1.4rem] bg-white px-6 py-10 shadow-sm sm:px-8 sm:py-12">
             {children}
           </div>
         </div>

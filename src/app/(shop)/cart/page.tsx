@@ -48,8 +48,8 @@ export default function CartPage() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <header className="space-y-1">
-        <h1 className="text-4xl font-black tracking-tight text-zinc-950">My Cart</h1>
-        <p className="text-base font-bold text-zinc-400 uppercase tracking-widest text-[10px]">
+        <h1 className="text-3xl font-black tracking-tight text-zinc-950 sm:text-4xl">My Cart</h1>
+        <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
           {totalQty} {totalQty === 1 ? "Product" : "Products"} selected
         </p>
       </header>
@@ -60,9 +60,9 @@ export default function CartPage() {
           {items.map((item) => (
             <li
               key={item.productId}
-              className="group flex gap-5 rounded-3xl bg-white p-4 shadow-sm ring-1 ring-zinc-200 transition-all hover:shadow-xl hover:shadow-indigo-50 hover:ring-indigo-200"
+              className="group flex gap-4 rounded-2xl bg-white p-3.5 shadow-sm ring-1 ring-zinc-200/80 transition-all hover:shadow-lg hover:shadow-indigo-50/80 hover:ring-indigo-200/60"
             >
-              <div className="size-28 shrink-0 overflow-hidden rounded-2xl bg-zinc-100 ring-1 ring-zinc-200/50">
+              <div className="size-24 shrink-0 overflow-hidden rounded-xl bg-zinc-100 ring-1 ring-zinc-200/50 sm:size-28">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={item.image}
@@ -75,7 +75,7 @@ export default function CartPage() {
                 <div className="flex items-start justify-between gap-4">
                   <Link
                     href={`/market/product/${item.productId}`}
-                    className="line-clamp-2 text-lg font-bold text-zinc-950 hover:text-indigo-600 transition-colors"
+                    className="line-clamp-2 text-base font-bold text-zinc-950 hover:text-indigo-600 transition-colors sm:text-lg"
                   >
                     {item.title}
                   </Link>
@@ -88,7 +88,7 @@ export default function CartPage() {
                   </button>
                 </div>
                 
-                <p className="mt-1 text-xl font-black text-indigo-600">
+                <p className="mt-0.5 text-lg font-black text-indigo-600 sm:text-xl">
                   ${item.price.toFixed(2)}
                 </p>
 

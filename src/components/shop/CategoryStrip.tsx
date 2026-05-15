@@ -36,30 +36,32 @@ export function CategoryStrip({
   if (isError || !data) return null;
 
   return (
-    <div className="flex gap-2.5 overflow-x-auto py-4 no-scrollbar">
-      <button
-        onClick={() => onChange(null)}
-        className={`shrink-0 rounded-2xl px-5 py-2.5 text-sm font-bold transition-all ${
-          active === null
-            ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100"
-            : "bg-white text-zinc-600 ring-1 ring-zinc-200 hover:ring-indigo-300 hover:text-indigo-600 hover:bg-indigo-50/30"
-        }`}
-      >
-        All Products
-      </button>
-      {data.map((cat) => (
+    <div className="-mx-4 overflow-x-auto px-4 no-scrollbar sm:mx-0 sm:px-0">
+      <div className="flex gap-2 py-3 w-max sm:w-auto">
         <button
-          key={cat.id}
-          onClick={() => onChange(cat.categoryName)}
-          className={`shrink-0 rounded-2xl px-5 py-2.5 text-sm font-bold transition-all ${
-            active === cat.categoryName
-              ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100"
-              : "bg-white text-zinc-600 ring-1 ring-zinc-200 hover:ring-indigo-300 hover:text-indigo-600 hover:bg-indigo-50/30"
+          onClick={() => onChange(null)}
+          className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-all active:scale-95 ${
+            active === null
+              ? "bg-indigo-600 text-white shadow-md shadow-indigo-200"
+              : "bg-white text-zinc-600 ring-1 ring-zinc-200 hover:ring-indigo-300 hover:text-indigo-600"
           }`}
         >
-          {cat.categoryName}
+          All
         </button>
-      ))}
+        {data.map((cat) => (
+          <button
+            key={cat.id}
+            onClick={() => onChange(cat.categoryName)}
+            className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-all active:scale-95 ${
+              active === cat.categoryName
+                ? "bg-indigo-600 text-white shadow-md shadow-indigo-200"
+                : "bg-white text-zinc-600 ring-1 ring-zinc-200 hover:ring-indigo-300 hover:text-indigo-600"
+            }`}
+          >
+            {cat.categoryName}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

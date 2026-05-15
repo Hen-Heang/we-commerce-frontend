@@ -77,8 +77,6 @@ export default function ProfilePage() {
           loading={profileQuery.isLoading}
         />
 
-        <MyProductsSection />
-
         <AddressesSection
           addresses={addressesQuery.data}
           loading={addressesQuery.isLoading}

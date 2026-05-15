@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Search, Heart, User, Package } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
 import { isAuthenticated } from "@/lib/auth";
 import { CartNavLink } from "@/components/shop/CartNavLink";
 import { SearchOverlay } from "@/components/shop/SearchOverlay";
+import { ProfileMenu } from "@/components/shop/ProfileMenu";
 
 /**
  * Top navigation bar.
@@ -15,18 +16,18 @@ import { SearchOverlay } from "@/components/shop/SearchOverlay";
  * Modern e-commerce layout (Amazon / Coupang / Nike pattern):
  *
  *   Desktop (md+):
- *     ┌────────────────────────────────────────────────────────────────────┐
- *     │  [Logo]   Discover  Categories  Sell           [🔍] [♥] [📦] [🛒] [👤] │
- *     └────────────────────────────────────────────────────────────────────┘
+ *     ┌──────────────────────────────────────────────────────────────────┐
+ *     │  [Logo]   Discover  Categories  Sell      🔍 ♥ 📦 🛒  │  👤▼     │
+ *     └──────────────────────────────────────────────────────────────────┘
  *     Logo on the left, primary nav links centered, action icons on the right.
- *     Search is a button that opens a full-width overlay (not an inline input).
+ *     Profile icon opens a dropdown menu (My Orders / Saved / My listings /
+ *     Addresses / Settings / Log out).
  *
  *   Mobile (< md):
  *     ┌────────────────────────────┐
- *     │  [Logo]              [🔍] [🛒] │
+ *     │  [Logo]              🔍 🛒 │
  *     └────────────────────────────┘
- *     Minimal — primary navigation lives in BottomNav. Search icon stays
- *     accessible because product discovery is the most common task.
+ *     Minimal — primary navigation lives in BottomNav.
  */
 
 type CenterLink = { href: string; label: string; matchPrefix?: string };
@@ -34,20 +35,21 @@ type CenterLink = { href: string; label: string; matchPrefix?: string };
 const CENTER_LINKS: CenterLink[] = [
   { href: "/market", label: "Discover" },
   { href: "/market?cat=Fashion", label: "Categories", matchPrefix: "/market" },
-  { href: "/profile", label: "Sell", matchPrefix: "/profile" },
+  { href: "/sell", label: "Sell" },
 ];
 
 export function Navbar() {
   const pathname = usePathname();
   const [authed, setAuthed] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const profileAnchorRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     setAuthed(isAuthenticated());
   }, []);
 
   function isActive(href: string, matchPrefix?: string) {
-    // Strip query string from href for comparison
     const hrefPath = href.split("?")[0];
     if (matchPrefix) {
       return pathname?.startsWith(matchPrefix) && pathname === hrefPath;
@@ -120,20 +122,28 @@ export function Navbar() {
               </Link>
             </div>
 
-            {/* Cart — always visible (badge glanceable while scrolling) */}
+            {/* Cart — always visible */}
             <CartNavLink />
 
-            {/* Profile / Login — desktop only on mobile profile is in BottomNav */}
-            <div className="hidden md:flex md:items-center md:gap-1">
+            {/* Profile dropdown — desktop only */}
+            <div className="relative hidden md:flex md:items-center md:gap-1">
               <span className="mx-1 h-6 w-px bg-zinc-200" aria-hidden />
               {authed ? (
-                <Link
-                  href="/profile"
-                  aria-label="Profile"
-                  className="rounded-xl p-2.5 text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-indigo-600"
+                <button
+                  ref={profileAnchorRef}
+                  type="button"
+                  onClick={() => setProfileMenuOpen((v) => !v)}
+                  aria-label="Open profile menu"
+                  aria-expanded={profileMenuOpen}
+                  aria-haspopup="menu"
+                  className={`rounded-xl p-2.5 transition-colors ${
+                    profileMenuOpen
+                      ? "bg-indigo-50 text-indigo-600"
+                      : "text-zinc-600 hover:bg-zinc-100 hover:text-indigo-600"
+                  }`}
                 >
                   <User className="size-5" />
-                </Link>
+                </button>
               ) : (
                 <Link
                   href="/login"
@@ -142,9 +152,14 @@ export function Navbar() {
                   Log in
                 </Link>
               )}
+              <ProfileMenu
+                open={profileMenuOpen}
+                onClose={() => setProfileMenuOpen(false)}
+                anchorRef={profileAnchorRef}
+              />
             </div>
 
-            {/* Mobile Log-in button (when not authed; profile icon stays in BottomNav) */}
+            {/* Mobile login button when unauthenticated */}
             {!authed && (
               <Link
                 href="/login"
@@ -157,7 +172,6 @@ export function Navbar() {
         </div>
       </header>
 
-      {/* Search modal — slides down from top */}
       <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   );

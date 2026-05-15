@@ -25,9 +25,9 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Link
       href={`/market/product/${product.id}`}
-      className="group block overflow-hidden rounded-3xl bg-white p-2 shadow-sm ring-1 ring-zinc-200 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-100/50 hover:ring-indigo-500/30 hover:-translate-y-1"
+      className="group block overflow-hidden rounded-2xl bg-white p-1.5 shadow-sm ring-1 ring-zinc-200/80 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-100/60 hover:ring-indigo-400/40 hover:-translate-y-0.5 active:scale-[0.98]"
     >
-      <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-zinc-100">
+      <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-zinc-100">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={imageUrl}
@@ -45,10 +45,10 @@ export function ProductCard({ product }: { product: Product }) {
             e.stopPropagation();
             toggle.mutate({ productId: product.id, currentlySaved: saved });
           }}
-          className="absolute right-3 top-3 rounded-xl bg-white/95 p-2 text-zinc-500 shadow-md transition-all hover:bg-white hover:text-rose-500 active:scale-90"
+          className="absolute right-2.5 top-2.5 rounded-xl bg-white/95 p-2.5 text-zinc-400 shadow-md ring-1 ring-zinc-100 transition-all hover:bg-white hover:text-rose-500 active:scale-90"
         >
           <Heart
-            className={`size-4.5 transition-colors ${
+            className={`size-4 transition-colors ${
               saved ? "fill-rose-500 text-rose-500" : ""
             }`}
           />
@@ -64,20 +64,20 @@ export function ProductCard({ product }: { product: Product }) {
           <AddToCartButton
             product={product}
             variant="icon"
-            className="absolute bottom-3 right-3 translate-y-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
+            className="absolute bottom-3 right-3 transition-all duration-300 md:translate-y-4 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100"
           />
         )}
       </div>
 
-      <div className="space-y-1.5 px-2 py-3">
-        <h3 className="line-clamp-1 text-sm font-bold text-zinc-950 transition-colors group-hover:text-indigo-600">
+      <div className="space-y-1 px-2 py-2.5">
+        <h3 className="line-clamp-1 text-[13px] font-semibold text-zinc-800 transition-colors group-hover:text-indigo-600">
           {product.title}
         </h3>
-        <div className="flex items-center justify-between">
-          <p className="text-lg font-black text-zinc-900">
+        <div className="flex items-center justify-between gap-1">
+          <p className="text-base font-black text-zinc-950">
             ${product.price?.toFixed(2) ?? "—"}
           </p>
-          <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-tighter">New arrival</span>
+          <span className="shrink-0 rounded-md bg-indigo-50 px-1.5 py-0.5 text-[9px] font-bold text-indigo-500 uppercase tracking-wide">New</span>
         </div>
       </div>
     </Link>

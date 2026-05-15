@@ -79,8 +79,8 @@ export default function ProductDetailPage({
       )}
 
       {data && (
-        <div className="grid gap-10 lg:grid-cols-2">
-          <div className="aspect-square overflow-hidden rounded-[2.5rem] bg-zinc-100 shadow-2xl shadow-indigo-100/50 ring-1 ring-zinc-200/50">
+        <div className="grid gap-6 lg:grid-cols-2 lg:gap-10">
+          <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-zinc-100 shadow-xl shadow-indigo-100/40 ring-1 ring-zinc-200/50 sm:aspect-square sm:rounded-[2.5rem]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={resolvePhotoUrl(data.photo?.[0]?.photo)}
@@ -89,9 +89,9 @@ export default function ProductDetailPage({
             />
           </div>
 
-          <div className="flex flex-col justify-center space-y-8 py-4">
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
+          <div className="flex flex-col justify-center space-y-5 lg:space-y-8 lg:py-4">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 flex-wrap">
                 {data.status && (
                   <span className="inline-block rounded-lg bg-zinc-950 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-white">
                     {data.status}
@@ -99,61 +99,62 @@ export default function ProductDetailPage({
                 )}
                 <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Authentic Product</span>
               </div>
-              <h1 className="text-4xl font-black tracking-tight text-zinc-950 lg:text-5xl leading-tight">
+              <h1 className="text-2xl font-black tracking-tight text-zinc-950 sm:text-4xl lg:text-5xl leading-tight">
                 {data.title}
               </h1>
-              <p className="text-4xl font-black text-indigo-600">
+              <p className="text-3xl font-black text-indigo-600 sm:text-4xl">
                 ${data.price?.toFixed(2) ?? "—"}
               </p>
             </div>
 
             <div className="h-px bg-zinc-100" />
 
-            <div className="space-y-4">
-              <p className="text-sm font-medium text-zinc-500 leading-relaxed">
-                Experience premium quality with this {data.title}. Designed for those who value both style and functionality in their daily lives.
-              </p>
-            </div>
+            <p className="text-sm font-medium text-zinc-500 leading-relaxed">
+              Experience premium quality with this {data.title}. Designed for those who value both style and functionality in their daily lives.
+            </p>
 
-            <div className="flex flex-wrap gap-4 pt-4">
-              <button
-                onClick={handleBuyNow}
-                className="flex-[2] rounded-2xl bg-zinc-950 px-8 py-5 text-lg font-black text-white shadow-2xl shadow-zinc-200 transition-all hover:bg-zinc-800 hover:scale-[1.02] active:scale-[0.98]"
-              >
-                Buy Now
-              </button>
+            {/* Mobile-optimised CTA stack */}
+            <div className="space-y-3 pt-2">
+              <div className="flex gap-3">
+                <button
+                  onClick={handleBuyNow}
+                  className="flex-1 rounded-2xl bg-zinc-950 px-6 py-4 text-base font-black text-white shadow-xl shadow-zinc-200 transition-all hover:bg-zinc-800 active:scale-[0.98]"
+                >
+                  Buy Now
+                </button>
+                <button
+                  onClick={() =>
+                    toggleBookmark.mutate({
+                      productId: data.id,
+                      currentlySaved: !!data.isSaved,
+                    })
+                  }
+                  aria-label={data.isSaved ? "Unsave" : "Save"}
+                  className="rounded-2xl border-2 border-zinc-200 bg-white px-4 py-4 text-zinc-400 transition-all hover:border-rose-200 hover:bg-rose-50 hover:text-rose-500 active:scale-[0.98]"
+                >
+                  <Heart
+                    className={`size-5 transition-colors ${
+                      data.isSaved ? "fill-rose-500 text-rose-500" : ""
+                    }`}
+                  />
+                </button>
+              </div>
               <button
                 onClick={handleAddToCart}
-                className="flex-1 rounded-2xl border-2 border-zinc-200 bg-white px-8 py-5 text-lg font-bold text-zinc-950 transition-all hover:bg-zinc-50 hover:border-zinc-300 active:scale-[0.98]"
+                className="w-full rounded-2xl border-2 border-zinc-200 bg-white px-6 py-4 text-base font-bold text-zinc-950 transition-all hover:bg-zinc-50 hover:border-zinc-300 active:scale-[0.98]"
               >
                 Add to Cart
               </button>
-              <button
-                onClick={() =>
-                  toggleBookmark.mutate({
-                    productId: data.id,
-                    currentlySaved: !!data.isSaved,
-                  })
-                }
-                aria-label={data.isSaved ? "Unsave" : "Save"}
-                className="rounded-2xl border-2 border-zinc-200 bg-white p-5 text-zinc-500 transition-all hover:bg-zinc-50 hover:border-zinc-300 hover:text-rose-500 active:scale-[0.98]"
-              >
-                <Heart
-                  className={`size-6 transition-colors ${
-                    data.isSaved ? "fill-rose-500 text-rose-500" : ""
-                  }`}
-                />
-              </button>
             </div>
-            
-            <div className="grid grid-cols-2 gap-4 pt-4">
-              <div className="rounded-2xl bg-zinc-50 p-4 border border-zinc-100">
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-2xl bg-zinc-50 p-3.5 border border-zinc-100">
                 <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-1">Shipping</p>
-                <p className="text-sm font-bold text-zinc-900">Free Express Delivery</p>
+                <p className="text-sm font-bold text-zinc-900">Free Express</p>
               </div>
-              <div className="rounded-2xl bg-zinc-50 p-4 border border-zinc-100">
+              <div className="rounded-2xl bg-zinc-50 p-3.5 border border-zinc-100">
                 <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-1">Returns</p>
-                <p className="text-sm font-bold text-zinc-900">30-Day Money Back</p>
+                <p className="text-sm font-bold text-zinc-900">30-Day Guarantee</p>
               </div>
             </div>
           </div>
