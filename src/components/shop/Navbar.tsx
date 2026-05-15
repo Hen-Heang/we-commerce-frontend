@@ -1,127 +1,164 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Search, Heart, User, Package } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
 import { isAuthenticated } from "@/lib/auth";
 import { CartNavLink } from "@/components/shop/CartNavLink";
+import { SearchOverlay } from "@/components/shop/SearchOverlay";
 
 /**
- * Top navigation bar for all authenticated shop pages.
+ * Top navigation bar.
  *
- * Responsive strategy:
- *   - Mobile (< md):  logo + search-row underneath. Icons live in BottomNav.
- *   - Desktop (md+):  logo + inline search + right-side icons (saved, cart, profile).
- *                     BottomNav is hidden — top nav is the only nav.
+ * Modern e-commerce layout (Amazon / Coupang / Nike pattern):
+ *
+ *   Desktop (md+):
+ *     ┌────────────────────────────────────────────────────────────────────┐
+ *     │  [Logo]   Discover  Categories  Sell           [🔍] [♥] [📦] [🛒] [👤] │
+ *     └────────────────────────────────────────────────────────────────────┘
+ *     Logo on the left, primary nav links centered, action icons on the right.
+ *     Search is a button that opens a full-width overlay (not an inline input).
+ *
+ *   Mobile (< md):
+ *     ┌────────────────────────────┐
+ *     │  [Logo]              [🔍] [🛒] │
+ *     └────────────────────────────┘
+ *     Minimal — primary navigation lives in BottomNav. Search icon stays
+ *     accessible because product discovery is the most common task.
  */
+
+type CenterLink = { href: string; label: string; matchPrefix?: string };
+
+const CENTER_LINKS: CenterLink[] = [
+  { href: "/market", label: "Discover" },
+  { href: "/market?cat=Fashion", label: "Categories", matchPrefix: "/market" },
+  { href: "/profile", label: "Sell", matchPrefix: "/profile" },
+];
+
 export function Navbar() {
-  const router = useRouter();
-  const [query, setQuery] = useState("");
+  const pathname = usePathname();
   const [authed, setAuthed] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   useEffect(() => {
     setAuthed(isAuthenticated());
   }, []);
 
-  function onSearchSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const trimmed = query.trim();
-    if (!trimmed) return;
-    router.push(`/market?q=${encodeURIComponent(trimmed)}`);
+  function isActive(href: string, matchPrefix?: string) {
+    // Strip query string from href for comparison
+    const hrefPath = href.split("?")[0];
+    if (matchPrefix) {
+      return pathname?.startsWith(matchPrefix) && pathname === hrefPath;
+    }
+    return pathname === hrefPath;
   }
 
   return (
-    <header className="sticky top-0 z-30 border-b border-zinc-100 bg-white/90 backdrop-blur-xl shadow-sm shadow-zinc-100/80">
-      <div className="mx-auto flex h-14 max-w-7xl items-center gap-3 px-4 sm:h-16 sm:px-6 lg:px-8">
-        {/* Brand */}
-        <Link href="/market" className="shrink-0 transition-transform hover:scale-105 active:scale-95">
-          <Logo className="text-xl" />
-        </Link>
-
-        {/* Search — grows on desktop, hidden on mobile */}
-        <form
-          onSubmit={onSearchSubmit}
-          className="ml-4 hidden flex-1 max-w-xl md:flex"
-        >
-          <div className="relative w-full group">
-            <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-zinc-400 group-focus-within:text-indigo-600 transition-colors" />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search products, sellers..."
-              className="w-full rounded-full border border-zinc-200 bg-zinc-50 py-2.5 pl-10 pr-4 text-sm text-zinc-950 placeholder:text-zinc-400 outline-none transition-all focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10"
-            />
-          </div>
-        </form>
-
-        {/* Right side — desktop only. Mobile uses BottomNav. */}
-        <nav className="ml-auto hidden items-center gap-2 md:flex">
+    <>
+      <header className="sticky top-0 z-30 border-b border-zinc-100 bg-white/90 backdrop-blur-xl shadow-sm shadow-zinc-100/80">
+        <div className="mx-auto flex h-14 max-w-7xl items-center gap-3 px-4 sm:h-16 sm:px-6 lg:px-8">
+          {/* LEFT — Brand */}
           <Link
-            href="/saved"
-            aria-label="Saved"
-            className="rounded-xl p-2.5 text-zinc-600 hover:bg-zinc-100 hover:text-indigo-600 transition-colors"
+            href="/market"
+            className="shrink-0 transition-transform hover:scale-105 active:scale-95"
           >
-            <Heart className="size-5" />
+            <Logo className="text-xl" />
           </Link>
-          <Link
-            href="/orders"
-            aria-label="My orders"
-            className="rounded-xl p-2.5 text-zinc-600 hover:bg-zinc-100 hover:text-indigo-600 transition-colors"
-          >
-            <Package className="size-5" />
-          </Link>
-          <CartNavLink />
 
-          <div className="mx-2 h-6 w-px bg-zinc-200" />
+          {/* CENTER — Primary nav menu (desktop only) */}
+          <nav className="hidden flex-1 items-center justify-center gap-1 md:flex">
+            {CENTER_LINKS.map(({ href, label, matchPrefix }) => {
+              const active = isActive(href, matchPrefix);
+              return (
+                <Link
+                  key={label}
+                  href={href}
+                  className={`relative rounded-xl px-4 py-2 text-sm font-bold transition-colors ${
+                    active
+                      ? "text-indigo-600"
+                      : "text-zinc-700 hover:text-indigo-600"
+                  }`}
+                >
+                  {label}
+                  {active && (
+                    <span className="absolute inset-x-3 -bottom-1 h-0.5 rounded-full bg-indigo-600" />
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
 
-          {authed ? (
-            <Link
-              href="/profile"
-              aria-label="Profile"
-              className="rounded-xl p-2.5 text-zinc-600 hover:bg-zinc-100 hover:text-indigo-600 transition-colors"
+          {/* RIGHT — Action icons */}
+          <div className="ml-auto flex items-center gap-1">
+            {/* Search trigger (always visible) */}
+            <button
+              type="button"
+              onClick={() => setSearchOpen(true)}
+              aria-label="Search"
+              className="rounded-xl p-2.5 text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-indigo-600"
             >
-              <User className="size-5" />
-            </Link>
-          ) : (
-            <Link
-              href="/login"
-              className="rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all hover:scale-105 active:scale-95"
-            >
-              Log in
-            </Link>
-          )}
-        </nav>
+              <Search className="size-5" />
+            </button>
 
-        {/* Mobile: just keep the cart visible at the top too, so badge is glanceable
-            while scrolling. Profile/Saved live in BottomNav. */}
-        <div className="ml-auto md:hidden">
-          {authed ? (
+            {/* Desktop-only icons */}
+            <div className="hidden items-center gap-1 md:flex">
+              <Link
+                href="/saved"
+                aria-label="Saved"
+                className="rounded-xl p-2.5 text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-indigo-600"
+              >
+                <Heart className="size-5" />
+              </Link>
+              <Link
+                href="/orders"
+                aria-label="My orders"
+                className="rounded-xl p-2.5 text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-indigo-600"
+              >
+                <Package className="size-5" />
+              </Link>
+            </div>
+
+            {/* Cart — always visible (badge glanceable while scrolling) */}
             <CartNavLink />
-          ) : (
-            <Link
-              href="/login"
-              className="rounded-xl bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-lg shadow-indigo-100 hover:bg-indigo-700"
-            >
-              Log in
-            </Link>
-          )}
-        </div>
-      </div>
 
-      {/* Mobile search */}
-      <form onSubmit={onSearchSubmit} className="border-t border-zinc-100 px-4 py-2.5 md:hidden">
-        <div className="relative group">
-          <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-zinc-400 group-focus-within:text-indigo-600 transition-colors" />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search products..."
-            className="w-full rounded-full border border-zinc-200 bg-zinc-50 py-2.5 pl-10 pr-4 text-sm text-zinc-950 placeholder:text-zinc-400 outline-none transition-all focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10"
-          />
+            {/* Profile / Login — desktop only on mobile profile is in BottomNav */}
+            <div className="hidden md:flex md:items-center md:gap-1">
+              <span className="mx-1 h-6 w-px bg-zinc-200" aria-hidden />
+              {authed ? (
+                <Link
+                  href="/profile"
+                  aria-label="Profile"
+                  className="rounded-xl p-2.5 text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-indigo-600"
+                >
+                  <User className="size-5" />
+                </Link>
+              ) : (
+                <Link
+                  href="/login"
+                  className="rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-indigo-100 transition-all hover:bg-indigo-700 hover:scale-105 active:scale-95"
+                >
+                  Log in
+                </Link>
+              )}
+            </div>
+
+            {/* Mobile Log-in button (when not authed; profile icon stays in BottomNav) */}
+            {!authed && (
+              <Link
+                href="/login"
+                className="rounded-xl bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-lg shadow-indigo-100 hover:bg-indigo-700 md:hidden"
+              >
+                Log in
+              </Link>
+            )}
+          </div>
         </div>
-      </form>
-    </header>
+      </header>
+
+      {/* Search modal — slides down from top */}
+      <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
+    </>
   );
 }
