@@ -101,7 +101,7 @@ export function AddToCollectionModal({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-end justify-center bg-black/40 p-0 sm:items-center sm:p-4"
+      className="fixed inset-0 z-[100] flex items-end justify-center bg-zinc-950/60 backdrop-blur-md p-0 sm:items-center sm:p-4"
       onClick={isWorking ? undefined : onClose}
       role="dialog"
       aria-modal="true"
