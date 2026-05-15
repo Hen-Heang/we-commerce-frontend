@@ -36,9 +36,9 @@ export function AddToCartButton({
         type="button"
         onClick={handleAdd}
         aria-label="Add to cart"
-        className={`rounded-xl bg-indigo-600 p-2.5 text-white shadow-lg shadow-indigo-200 transition-all hover:bg-indigo-700 hover:scale-110 active:scale-90 ${className}`}
+        className={`tap-bounce rounded-full bg-primary p-2.5 text-white shadow-lg shadow-primary/20 transition-all ${className}`}
       >
-        <ShoppingBag className="size-4.5" />
+        <ShoppingBag className="size-4.5" strokeWidth={2.5} />
       </button>
     );
   }
@@ -47,9 +47,9 @@ export function AddToCartButton({
     <button
       type="button"
       onClick={handleAdd}
-      className={`inline-flex items-center justify-center gap-2 rounded-2xl bg-indigo-600 px-8 py-4 text-base font-bold text-white shadow-xl shadow-indigo-200 transition-all hover:bg-indigo-700 hover:scale-[1.02] active:scale-[0.98] ${className}`}
+      className={`tap-bounce inline-flex items-center justify-center gap-2 rounded-full bg-primary px-10 py-4.5 text-base font-bold text-white shadow-xl shadow-primary/30 transition-all ${className}`}
     >
-      <ShoppingBag className="size-5.5" />
+      <ShoppingBag className="size-5.5" strokeWidth={2.5} />
       Add to cart
     </button>
   );

@@ -81,36 +81,47 @@ function MarketPageInner() {
     : "Discover";
 
   return (
-    <div className="space-y-6">
-      <CategoryStrip active={category} onChange={setCategory} />
+    <div className="space-y-10">
+      <div className="space-y-6">
+        <CategoryStrip active={category} onChange={setCategory} />
 
-      {/* Popular strip only on default view */}
-      {!search && !category && (
-        <PopularStrip
-          loading={popularQuery.isLoading}
-          products={popularQuery.data ?? []}
-        />
-      )}
+        {/* Popular strip only on default view */}
+        {!search && !category && (
+          <PopularStrip
+            loading={popularQuery.isLoading}
+            products={popularQuery.data ?? []}
+          />
+        )}
+      </div>
 
       <section>
-        <h2 className="mb-4 text-xl font-black tracking-tight text-zinc-950">{heading}</h2>
+        <div className="mb-6 flex items-baseline justify-between">
+          <h2 className="text-3xl font-black tracking-tight text-zinc-950">{heading}</h2>
+          {!search && !category && (
+            <span className="text-sm font-semibold text-primary">See all</span>
+          )}
+        </div>
 
         {mainQuery.isLoading && <Grid skeletonCount={8} />}
 
         {mainQuery.isError && (
-          <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
-            Couldn’t load products. Try again later.
-          </p>
+          <div className="squircle-lg bg-red-50/50 p-8 text-center ring-1 ring-red-100">
+            <p className="text-sm font-medium text-red-800">
+              Couldn’t load products. Try again later.
+            </p>
+          </div>
         )}
 
         {!mainQuery.isLoading && products.length === 0 && (
-          <p className="rounded-lg bg-zinc-100 px-4 py-6 text-center text-sm text-zinc-600">
-            No products found.
-          </p>
+          <div className="squircle-lg bg-zinc-50/50 p-12 text-center ring-1 ring-zinc-100">
+            <p className="text-sm font-medium text-zinc-500">
+              No products found.
+            </p>
+          </div>
         )}
 
         {products.length > 0 && (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5">
             {products.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
@@ -134,21 +145,21 @@ function PopularStrip({
   if (!loading && products.length === 0) return null;
 
   return (
-    <section>
-      <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-xl font-black tracking-tight text-zinc-950">Popular right now</h2>
-        <span className="text-xs font-bold text-indigo-500 uppercase tracking-wider">Trending</span>
+    <section className="-mx-4 px-4 sm:mx-0 sm:px-0">
+      <div className="mb-4 flex items-center justify-between px-1">
+        <h2 className="text-2xl font-black tracking-tight text-zinc-950">Popular</h2>
+        <span className="rounded-full bg-orange-500/10 px-2 py-0.5 text-[10px] font-bold text-orange-600 uppercase tracking-wider">🔥 Trending</span>
       </div>
-      <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+      <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar scroll-fade-x">
         {loading
           ? Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
-                className="h-52 w-40 shrink-0 animate-pulse rounded-2xl bg-zinc-200"
+                className="h-64 w-48 shrink-0 animate-pulse squircle-lg bg-zinc-200"
               />
             ))
           : products.slice(0, 10).map((p) => (
-              <div key={p.id} className="w-40 shrink-0">
+              <div key={p.id} className="w-48 shrink-0">
                 <ProductCard product={p} />
               </div>
             ))}

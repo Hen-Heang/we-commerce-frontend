@@ -59,75 +59,74 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-30 border-b border-zinc-100 bg-white/90 backdrop-blur-xl shadow-sm shadow-zinc-100/80">
-        <div className="mx-auto flex h-14 max-w-7xl items-center gap-3 px-4 sm:h-16 sm:px-6 lg:px-8">
+      <header className="sticky top-0 z-40 glass border-b-0 shadow-[0_1px_0_rgba(0,0,0,0.05)]">
+        <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:h-20 sm:px-6 lg:px-8">
           {/* LEFT — Brand */}
           <Link
             href="/market"
-            className="shrink-0 transition-transform hover:scale-105 active:scale-95"
+            className="tap-bounce shrink-0 transition-transform"
           >
-            <Logo className="text-xl" />
+            <Logo className="text-2xl font-black tracking-tight" />
           </Link>
 
           {/* CENTER — Primary nav menu (desktop only) */}
-          <nav className="hidden flex-1 items-center justify-center gap-1 md:flex">
+          <nav className="hidden flex-1 items-center justify-center gap-2 md:flex">
             {CENTER_LINKS.map(({ href, label, matchPrefix }) => {
               const active = isActive(href, matchPrefix);
               return (
                 <Link
                   key={label}
                   href={href}
-                  className={`relative rounded-xl px-4 py-2 text-sm font-bold transition-colors ${
+                  className={`relative rounded-full px-5 py-2 text-[15px] font-bold transition-all ${
                     active
-                      ? "text-indigo-600"
-                      : "text-zinc-700 hover:text-indigo-600"
+                      ? "bg-primary text-white shadow-md shadow-primary/20"
+                      : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
                   }`}
                 >
                   {label}
-                  {active && (
-                    <span className="absolute inset-x-3 -bottom-1 h-0.5 rounded-full bg-indigo-600" />
-                  )}
                 </Link>
               );
             })}
           </nav>
 
           {/* RIGHT — Action icons */}
-          <div className="ml-auto flex items-center gap-1">
+          <div className="ml-auto flex items-center gap-1.5">
             {/* Search trigger (always visible) */}
             <button
               type="button"
               onClick={() => setSearchOpen(true)}
               aria-label="Search"
-              className="rounded-xl p-2.5 text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-indigo-600"
+              className="tap-bounce flex size-10 items-center justify-center rounded-full bg-zinc-100/50 text-zinc-700 transition-colors hover:bg-zinc-200"
             >
-              <Search className="size-5" />
+              <Search className="size-5" strokeWidth={2.5} />
             </button>
 
             {/* Desktop-only icons */}
-            <div className="hidden items-center gap-1 md:flex">
+            <div className="hidden items-center gap-1.5 md:flex">
               <Link
                 href="/saved"
                 aria-label="Saved"
-                className="rounded-xl p-2.5 text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-indigo-600"
+                className="tap-bounce flex size-10 items-center justify-center rounded-full bg-zinc-100/50 text-zinc-700 transition-colors hover:bg-zinc-200"
               >
-                <Heart className="size-5" />
+                <Heart className="size-5" strokeWidth={2.5} />
               </Link>
               <Link
                 href="/orders"
                 aria-label="My orders"
-                className="rounded-xl p-2.5 text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-indigo-600"
+                className="tap-bounce flex size-10 items-center justify-center rounded-full bg-zinc-100/50 text-zinc-700 transition-colors hover:bg-zinc-200"
               >
-                <Package className="size-5" />
+                <Package className="size-5" strokeWidth={2.5} />
               </Link>
             </div>
 
             {/* Cart — always visible */}
-            <CartNavLink />
+            <div className="tap-bounce">
+              <CartNavLink />
+            </div>
 
             {/* Profile dropdown — desktop only */}
-            <div className="relative hidden md:flex md:items-center md:gap-1">
-              <span className="mx-1 h-6 w-px bg-zinc-200" aria-hidden />
+            <div className="relative hidden md:flex md:items-center md:gap-1.5">
+              <span className="mx-1 h-8 w-px bg-zinc-200" aria-hidden />
               {authed ? (
                 <button
                   ref={profileAnchorRef}
@@ -136,18 +135,18 @@ export function Navbar() {
                   aria-label="Open profile menu"
                   aria-expanded={profileMenuOpen}
                   aria-haspopup="menu"
-                  className={`rounded-xl p-2.5 transition-colors ${
+                  className={`tap-bounce flex size-10 items-center justify-center rounded-full transition-all ${
                     profileMenuOpen
-                      ? "bg-indigo-50 text-indigo-600"
-                      : "text-zinc-600 hover:bg-zinc-100 hover:text-indigo-600"
+                      ? "bg-primary text-white shadow-lg shadow-primary/30"
+                      : "bg-zinc-100/50 text-zinc-700 hover:bg-zinc-200"
                   }`}
                 >
-                  <User className="size-5" />
+                  <User className="size-5" strokeWidth={2.5} />
                 </button>
               ) : (
                 <Link
                   href="/login"
-                  className="rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-indigo-100 transition-all hover:bg-indigo-700 hover:scale-105 active:scale-95"
+                  className="tap-bounce rounded-full bg-primary px-6 py-2.5 text-[15px] font-bold text-white shadow-lg shadow-primary/25 transition-all hover:bg-primary/90"
                 >
                   Log in
                 </Link>
@@ -163,7 +162,7 @@ export function Navbar() {
             {!authed && (
               <Link
                 href="/login"
-                className="rounded-xl bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-lg shadow-indigo-100 hover:bg-indigo-700 md:hidden"
+                className="tap-bounce ml-2 rounded-full bg-primary px-4 py-2 text-xs font-bold text-white shadow-lg shadow-primary/20 md:hidden"
               >
                 Log in
               </Link>

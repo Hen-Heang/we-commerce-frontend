@@ -1,4 +1,4 @@
-import type { Product, Category } from "@/types/api";
+import type { Product, Category, ShopProfile } from "@/types/api";
 
 /**
  * Mock data for development.
@@ -6,9 +6,8 @@ import type { Product, Category } from "@/types/api";
  * Used as a fallback when the backend returns an empty list — so the UI
  * never looks broken during a demo.
  *
- * INTERVIEW NOTE: This is a common pattern in real apps too. When a fresh
- * environment has no data yet (e.g., a recruiter clones the repo and runs it),
- * the app still shows a realistic landing experience.
+ * When the backend's ProductResponse adds seller info, drop the sellerId
+ * and sellerName fields and read them from the real response.
  */
 
 /* ---------------- helpers ---------------- */
@@ -16,10 +15,32 @@ import type { Product, Category } from "@/types/api";
 const img = (seed: string) =>
   `https://picsum.photos/seed/${encodeURIComponent(seed)}/600/600`;
 
+/* ---------------- mock shops ---------------- */
+export const MOCK_SHOPS: ShopProfile[] = [
+  {
+    id: 101,
+    name: "Heang's Vintage",
+    bio: "Curated retro finds from Phnom Penh. Every piece hand-picked.",
+    joinedAt: "2026-02-15T10:00:00",
+    productCount: 12,
+    rating: 4.8,
+    totalSales: 47,
+    location: "Phnom Penh, Cambodia",
+  },
+  {
+    id: 102,
+    name: "Beauty by Sokha",
+    bio: "Independent beauty brand. Locally sourced ingredients.",
+    joinedAt: "2026-03-01T09:00:00",
+    productCount: 8,
+    rating: 4.9,
+    totalSales: 89,
+    location: "Siem Reap, Cambodia",
+  },
+];
+
 /* ---------------- mock products ---------------- */
 export const MOCK_PRODUCTS: Product[] = [
- 
-  
   {
     id: 9005,
     title: "Pocket Calculator",
@@ -29,6 +50,8 @@ export const MOCK_PRODUCTS: Product[] = [
     createdDate: "2026-04-18T16:20:00",
     totalAmount: 1,
     photo: [{ id: 5, photo: img("calc") }],
+    sellerId: 101,
+    sellerName: "Heang's Vintage",
   },
   {
     id: 9006,
@@ -39,9 +62,9 @@ export const MOCK_PRODUCTS: Product[] = [
     createdDate: "2026-04-17T11:10:00",
     totalAmount: 1,
     photo: [{ id: 6, photo: img("lipstick") }],
+    sellerId: 102,
+    sellerName: "Beauty by Sokha",
   },
- 
- 
 ];
 
 /* ---------------- mock categories ---------------- */

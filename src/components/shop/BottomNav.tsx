@@ -41,37 +41,27 @@ export function BottomNav() {
   ];
 
   return (
-    /* Outer positioner — controls margin from screen edges + safe-area bottom inset.
-       The actual bar is rendered as a floating pill INSIDE this container. */
     <div
-      className="fixed inset-x-0 bottom-0 z-40 px-3 pt-2 md:hidden pointer-events-none"
-      style={{ paddingBottom: "max(env(safe-area-inset-bottom, 8px), 12px)" }}
+      className="fixed inset-x-0 bottom-0 z-50 px-4 pt-2 md:hidden pointer-events-none"
+      style={{ paddingBottom: "max(env(safe-area-inset-bottom, 12px), 16px)" }}
     >
       <nav
         aria-label="Primary"
         className="
           pointer-events-auto
-          mx-auto max-w-md
+          mx-auto max-w-lg
+          glass squircle-xl
           relative overflow-hidden
-          rounded-[2rem]
-          bg-white/55
-          backdrop-blur-2xl backdrop-saturate-[1.8]
-          ring-1 ring-white/40
-          shadow-[0_8px_32px_-8px_rgba(0,0,0,0.15),0_4px_12px_-2px_rgba(0,0,0,0.08)]
+          shadow-[0_12px_40px_-12px_rgba(0,0,0,0.15)]
         "
       >
-        {/* Top inner highlight — the "glass edge catching light" effect */}
+        {/* Luminous accent — subtle top light */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent"
-        />
-        {/* Subtle vertical tint — makes the glass feel "filled" not transparent */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10"
+          className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent"
         />
 
-        <ul className="relative flex items-stretch justify-around px-1.5 py-1.5">
+        <ul className="relative flex items-stretch justify-around px-2 py-2">
           {items.map(({ href, label, icon: Icon, badge }) => {
             const active =
               pathname === href ||
@@ -83,34 +73,32 @@ export function BottomNav() {
                   href={href}
                   aria-label={label}
                   aria-current={active ? "page" : undefined}
-                  className={`flex flex-col items-center gap-0.5 rounded-2xl py-1.5 text-[10px] font-bold tracking-tight transition-all duration-300 ${
-                    active ? "text-indigo-700" : "text-zinc-500"
+                  className={`tap-bounce flex flex-col items-center gap-1 rounded-2xl py-1 text-[10px] font-bold tracking-tight transition-all duration-300 ${
+                    active ? "text-primary" : "text-zinc-500"
                   }`}
                 >
-                  {/* Icon container — becomes its own glass-pill when active */}
                   <span
-                    className={`relative flex h-9 w-12 items-center justify-center rounded-2xl transition-all duration-300 ease-out ${
+                    className={`relative flex h-10 w-14 items-center justify-center rounded-2xl transition-all duration-300 ease-out ${
                       active
-                        ? "bg-white/70 backdrop-blur-xl backdrop-saturate-[1.5] ring-1 ring-white/60 shadow-[0_2px_8px_-2px_rgba(79,70,229,0.25),inset_0_1px_0_rgba(255,255,255,0.8)] scale-110"
+                        ? "bg-primary/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] scale-105"
                         : ""
                     }`}
                   >
                     <Icon
-                      className={`size-[1.125rem] transition-transform duration-300 ${
+                      className={`size-[1.25rem] transition-all duration-300 ${
                         active ? "scale-110" : ""
                       }`}
                       strokeWidth={active ? 2.5 : 2}
                     />
-                    {/* Cart count badge */}
                     {label === "Cart" && mounted && (badge ?? 0) > 0 && (
-                      <span className="absolute -right-1 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-indigo-600 px-0.5 text-[9px] font-black leading-none text-white shadow-md ring-2 ring-white/90">
+                      <span className="absolute -right-0.5 -top-0.5 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-black leading-none text-white shadow-lg ring-2 ring-white">
                         {(badge ?? 0) > 99 ? "99+" : badge}
                       </span>
                     )}
                   </span>
                   <span
-                    className={`transition-all duration-300 ${
-                      active ? "opacity-100" : "opacity-70"
+                    className={`transition-all duration-400 ${
+                      active ? "opacity-100 translate-y-0" : "opacity-60 translate-y-0.5"
                     }`}
                   >
                     {label}

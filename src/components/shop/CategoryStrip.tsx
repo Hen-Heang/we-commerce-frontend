@@ -22,11 +22,11 @@ export function CategoryStrip({
   if (isLoading) {
     // Skeleton: 6 grey pills
     return (
-      <div className="flex gap-2 overflow-x-auto py-2">
+      <div className="flex gap-2 overflow-x-auto py-2 no-scrollbar">
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="h-9 w-24 shrink-0 animate-pulse rounded-full bg-zinc-200"
+            className="h-10 w-24 shrink-0 animate-pulse rounded-full bg-zinc-100"
           />
         ))}
       </div>
@@ -37,13 +37,13 @@ export function CategoryStrip({
 
   return (
     <div className="-mx-4 overflow-x-auto px-4 no-scrollbar sm:mx-0 sm:px-0">
-      <div className="flex gap-2 py-3 w-max sm:w-auto">
+      <div className="flex gap-2.5 py-3 w-max">
         <button
           onClick={() => onChange(null)}
-          className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-all active:scale-95 ${
+          className={`tap-bounce shrink-0 rounded-full px-5 py-2.5 text-[14px] font-bold transition-all ${
             active === null
-              ? "bg-indigo-600 text-white shadow-md shadow-indigo-200"
-              : "bg-white text-zinc-600 ring-1 ring-zinc-200 hover:ring-indigo-300 hover:text-indigo-600"
+              ? "bg-primary text-white shadow-lg shadow-primary/20"
+              : "bg-white text-zinc-600 ring-1 ring-zinc-200/60 hover:text-primary"
           }`}
         >
           All
@@ -52,10 +52,10 @@ export function CategoryStrip({
           <button
             key={cat.id}
             onClick={() => onChange(cat.categoryName)}
-            className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-all active:scale-95 ${
+            className={`tap-bounce shrink-0 rounded-full px-5 py-2.5 text-[14px] font-bold transition-all ${
               active === cat.categoryName
-                ? "bg-indigo-600 text-white shadow-md shadow-indigo-200"
-                : "bg-white text-zinc-600 ring-1 ring-zinc-200 hover:ring-indigo-300 hover:text-indigo-600"
+                ? "bg-primary text-white shadow-lg shadow-primary/20"
+                : "bg-white text-zinc-600 ring-1 ring-zinc-200/60 hover:text-primary"
             }`}
           >
             {cat.categoryName}

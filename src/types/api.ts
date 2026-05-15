@@ -48,6 +48,24 @@ export interface Product {
   createdDate: string;
   totalAmount: number | null;
   photo: Photo[] | null;
+  /**
+   * Frontend-only enrichment fields used until the backend's ProductResponse
+   * exposes seller info. Populated from MOCK_PRODUCTS for the demo.
+   */
+  sellerId?: number;
+  sellerName?: string;
+}
+
+/* ---------------- Shops (frontend-only for now) ---------------- */
+export interface ShopProfile {
+  id: number;
+  name: string;
+  bio?: string;
+  joinedAt: string;
+  productCount: number;
+  rating?: number;
+  totalSales?: number;
+  location?: string;
 }
 
 /** Mirrors backend CategoryResponse.java */

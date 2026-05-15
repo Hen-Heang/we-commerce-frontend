@@ -21,11 +21,11 @@ export function CartNavLink() {
     <Link
       href="/cart"
       aria-label={`Cart${mounted && count > 0 ? `, ${count} items` : ""}`}
-      className="relative inline-flex rounded-xl p-2.5 text-zinc-600 hover:bg-zinc-100 hover:text-indigo-600 transition-all active:scale-95"
+      className="tap-bounce relative flex size-10 items-center justify-center rounded-full bg-zinc-100/50 text-zinc-700 transition-colors hover:bg-zinc-200"
     >
-      <ShoppingBag className="size-5" />
+      <ShoppingBag className="size-5" strokeWidth={2.5} />
       {mounted && count > 0 && (
-        <span className="absolute -right-0.5 -top-0.5 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-indigo-600 px-1 text-[10px] font-black leading-none text-white shadow-sm ring-2 ring-white transition-transform animate-in zoom-in">
+        <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-black leading-none text-white shadow-lg shadow-primary/20 ring-2 ring-white transition-transform animate-in zoom-in">
           {count > 99 ? "99+" : count}
         </span>
       )}
