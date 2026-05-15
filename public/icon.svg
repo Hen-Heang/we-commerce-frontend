@@ -1,16 +1,23 @@
-<!-- We Commerce icon — bold W mark in gradient indigo rounded square.
-     Use anywhere you need a square logo: nav, social profile, README badge. -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+<!-- We Commerce Brand Icon — Modern iOS 25 Aesthetic -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#6366F1"/>
-      <stop offset="100%" stop-color="#4338CA"/>
+    <linearGradient id="brandGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#007aff"/>
+      <stop offset="100%" stop-color="#5856d6"/>
     </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
   </defs>
-  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
-  <text x="64" y="72" text-anchor="middle" dominant-baseline="central"
-        font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif"
-        font-weight="900" font-size="76" fill="white" letter-spacing="-3">W</text>
-  <!-- Subtle commerce accent — small dot in bottom-right -->
-  <circle cx="100" cy="100" r="6" fill="#34D399"/>
+
+  <!-- Squircle Icon (Simulated) -->
+  <rect x="10" y="10" width="80" height="80" rx="22" fill="url(#brandGradient)" />
+  <text x="50" y="58" text-anchor="middle" dominant-baseline="central"
+        font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif"
+        font-weight="900" font-size="48" fill="white" letter-spacing="-2">W</text>
+  
+  <!-- Status Dot -->
+  <circle cx="90" cy="10" r="9" fill="white" />
+  <circle cx="90" cy="10" r="7" fill="#34D399" filter="url(#glow)" />
 </svg>

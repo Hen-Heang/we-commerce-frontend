@@ -59,7 +59,7 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 glass border-b-0 shadow-[0_1px_0_rgba(0,0,0,0.05)]">
+      <header className="sticky top-0 z-40 glass border-b-0 shadow-[0_1px_0_rgba(0,0,0,0.05)]" style={{ paddingTop: "env(safe-area-inset-top)" }}>
         <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:h-20 sm:px-6 lg:px-8">
           {/* LEFT — Brand */}
           <Link

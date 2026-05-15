@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(Get-Content \"C:\\\\Practice\\\\we-commerce-api\\\\we-commerce-frontend\\\\src\\\\app\\\\globals.css\")"
     ]
   }
 }
