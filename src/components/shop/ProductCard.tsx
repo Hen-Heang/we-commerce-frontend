@@ -33,14 +33,14 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Link
       href={`/market/product/${product.id}`}
-      className="tap-bounce group block squircle-lg bg-white p-2 shadow-[0_4px_12px_rgba(0,0,0,0.05)] ring-1 ring-zinc-200/50 transition-all duration-300 hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)]"
+      className="tap-bounce spatial-lift group block squircle-lg bg-white p-2 shadow-[0_4px_12px_rgba(0,0,0,0.03)] ring-1 ring-zinc-200/50 transition-all duration-500"
     >
       <div className="relative aspect-[4/5] overflow-hidden rounded-[20px] bg-zinc-50">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={imageUrl}
           alt={product.title}
-          className="size-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+          className="size-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
           loading="lazy"
         />
 
@@ -53,10 +53,10 @@ export function ProductCard({ product }: { product: Product }) {
             e.stopPropagation();
             toggle.mutate({ productId: product.id, currentlySaved: saved });
           }}
-          className="absolute right-2.5 top-2.5 flex size-9 items-center justify-center rounded-full bg-white/80 backdrop-blur-md text-zinc-400 shadow-sm ring-1 ring-white/50 transition-all hover:bg-white hover:text-rose-500 active:scale-90"
+          className="absolute right-2.5 top-2.5 flex size-9 items-center justify-center rounded-full bg-white/70 backdrop-blur-md text-zinc-400 shadow-sm ring-1 ring-white/50 transition-all hover:bg-white hover:text-rose-500 hover:shadow-md active:scale-90"
         >
           <Heart
-            className={`size-4.5 transition-colors ${
+            className={`size-4.5 transition-colors duration-300 ${
               saved ? "fill-rose-500 text-rose-500" : ""
             }`}
           />
@@ -72,13 +72,13 @@ export function ProductCard({ product }: { product: Product }) {
           <AddToCartButton
             product={product}
             variant="icon"
-            className="absolute bottom-3 right-3 shadow-lg transition-all duration-300 md:translate-y-4 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100"
+            className="absolute bottom-3 right-3 shadow-xl transition-all duration-500 md:translate-y-4 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100"
           />
         )}
       </div>
 
-      <div className="space-y-1.5 px-1 py-3">
-        <h3 className="line-clamp-1 text-[14px] font-medium text-zinc-800 transition-colors group-hover:text-primary">
+      <div className="space-y-1 px-1 py-3">
+        <h3 className="line-clamp-1 text-[14px] font-semibold text-zinc-800 transition-colors group-hover:text-primary">
           {product.title}
         </h3>
 
@@ -87,18 +87,18 @@ export function ProductCard({ product }: { product: Product }) {
           <button
             type="button"
             onClick={goToShop}
-            className="flex items-center gap-1 text-[11px] font-semibold text-zinc-500 hover:text-primary transition-colors"
+            className="flex items-center gap-1 text-[11px] font-medium text-zinc-500 hover:text-primary transition-colors"
           >
-            <Store className="size-3" strokeWidth={2.5} />
+            <Store className="size-3" strokeWidth={2} />
             <span className="truncate">by {product.sellerName}</span>
           </button>
         )}
 
-        <div className="flex items-center justify-between gap-1">
-          <p className="text-[17px] font-bold tracking-tight text-zinc-950">
+        <div className="mt-1 flex items-center justify-between gap-1">
+          <p className="text-[17px] font-black tracking-tight text-zinc-950">
             ${product.price?.toFixed(2) ?? "—"}
           </p>
-          <span className="shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary uppercase tracking-wide">New</span>
+          <span className="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[9px] font-bold text-zinc-500 uppercase tracking-wide group-hover:bg-primary/10 group-hover:text-primary transition-colors">New</span>
         </div>
       </div>
     </Link>

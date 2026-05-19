@@ -8,7 +8,7 @@ import Link from "next/link";
 import { Pencil, MapPin, Plus, Trash2, LogOut, ShieldAlert, Save, User as UserIcon, Package, Wallet, Store, ArrowRight } from "lucide-react";
 
 import { fetchUserProfile, updateUserProfile, deleteUserAccount } from "@/lib/user";
-import { fetchAddresses, deleteAddress } from "@/lib/addresses";
+import { fetchAddresses, deleteAddress, updateAddress } from "@/lib/addresses";
 import { fetchAllCategories, createProduct } from "@/lib/products";
 import { useCartStore } from "@/store/cartStore";
 import { useShopStore } from "@/store/shopStore";
@@ -323,15 +323,20 @@ function AccountEditForm({
 /* ============================================================
  * Addresses section
  * ============================================================ */
+type AddrRow = { id: number; label: string; contact: string; telephone: string; address: string; detail: string };
+
 function AddressesSection({
   addresses,
   loading,
   onDelete,
 }: {
-  addresses: { id: number; label: string; contact: string; telephone: string; address: string; detail: string }[] | undefined;
+  addresses: AddrRow[] | undefined;
   loading: boolean;
   onDelete: (id: number) => void;
 }) {
+  const queryClient = useQueryClient();
+  const [editingId, setEditingId] = useState<number | null>(null);
+
   if (loading) return <SectionSkeleton title="Delivery addresses" />;
 
   return (
@@ -353,36 +358,118 @@ function AddressesSection({
         </p>
       ) : (
         <ul className="space-y-3">
-          {addresses.map((addr) => (
-            <li
-              key={addr.id}
-              className="flex items-start gap-4 rounded-2xl border border-zinc-200 bg-white p-4 transition-all hover:border-indigo-200 hover:shadow-md hover:shadow-indigo-50"
-            >
-              <span className="mt-1 grid size-10 shrink-0 place-items-center rounded-xl bg-indigo-50 text-indigo-600">
-                <MapPin className="size-5" />
-              </span>
-              <div className="flex-1">
-                <p className="text-sm font-bold text-zinc-950">
-                  {addr.label} · {addr.contact}
-                </p>
-                <p className="text-xs font-bold text-zinc-400 mt-0.5">{addr.telephone}</p>
-                <p className="text-xs font-medium text-zinc-600 mt-1">
-                  {addr.address}
-                  {addr.detail ? ` — ${addr.detail}` : ""}
-                </p>
-              </div>
-              <button
-                onClick={() => onDelete(addr.id)}
-                aria-label="Delete address"
-                className="rounded-xl p-2 text-zinc-400 hover:bg-rose-50 hover:text-rose-600 transition-all active:scale-90"
+          {addresses.map((addr) =>
+            editingId === addr.id ? (
+              <li key={addr.id} className="rounded-2xl border border-indigo-200 bg-indigo-50/30 p-5 animate-in slide-in-from-top-2 duration-200">
+                <AddressEditForm
+                  addr={addr}
+                  onCancel={() => setEditingId(null)}
+                  onSaved={() => {
+                    setEditingId(null);
+                    queryClient.invalidateQueries({ queryKey: ["addresses"] });
+                  }}
+                />
+              </li>
+            ) : (
+              <li
+                key={addr.id}
+                className="flex items-start gap-4 rounded-2xl border border-zinc-200 bg-white p-4 transition-all hover:border-indigo-200 hover:shadow-md hover:shadow-indigo-50"
               >
-                <Trash2 className="size-5" />
-              </button>
-            </li>
-          ))}
+                <span className="mt-1 grid size-10 shrink-0 place-items-center rounded-xl bg-indigo-50 text-indigo-600">
+                  <MapPin className="size-5" />
+                </span>
+                <div className="flex-1">
+                  <p className="text-sm font-bold text-zinc-950">
+                    {addr.label} · {addr.contact}
+                  </p>
+                  <p className="text-xs font-bold text-zinc-400 mt-0.5">{addr.telephone}</p>
+                  <p className="text-xs font-medium text-zinc-600 mt-1">
+                    {addr.address}
+                    {addr.detail ? ` — ${addr.detail}` : ""}
+                  </p>
+                </div>
+                <div className="flex gap-1">
+                  <button
+                    onClick={() => setEditingId(addr.id)}
+                    aria-label="Edit address"
+                    className="rounded-xl p-2 text-zinc-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all active:scale-90"
+                  >
+                    <Pencil className="size-4.5" />
+                  </button>
+                  <button
+                    onClick={() => onDelete(addr.id)}
+                    aria-label="Delete address"
+                    className="rounded-xl p-2 text-zinc-400 hover:bg-rose-50 hover:text-rose-600 transition-all active:scale-90"
+                  >
+                    <Trash2 className="size-5" />
+                  </button>
+                </div>
+              </li>
+            )
+          )}
         </ul>
       )}
     </Section>
+  );
+}
+
+function AddressEditForm({
+  addr,
+  onCancel,
+  onSaved,
+}: {
+  addr: AddrRow;
+  onCancel: () => void;
+  onSaved: () => void;
+}) {
+  const [values, setValues] = useState({
+    label: addr.label,
+    contact: addr.contact,
+    telephone: addr.telephone,
+    address: addr.address,
+    detail: addr.detail,
+  });
+
+  const save = useMutation({
+    mutationFn: () => updateAddress(addr.id, values),
+    onSuccess: () => {
+      toast.success("Address updated");
+      onSaved();
+    },
+    onError: (e: Error) => toast.error(e.message ?? "Update failed"),
+  });
+
+  function set<K extends keyof typeof values>(k: K, v: string) {
+    setValues((p) => ({ ...p, [k]: v }));
+  }
+
+  return (
+    <form onSubmit={(e) => { e.preventDefault(); save.mutate(); }} className="space-y-4">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="Label" value={values.label} onChange={(v) => set("label", v)} placeholder="Home, Office…" />
+        <Field label="Contact Name" value={values.contact} onChange={(v) => set("contact", v)} />
+        <Field label="Telephone" value={values.telephone} onChange={(v) => set("telephone", v)} />
+        <Field label="Delivery Address" value={values.address} onChange={(v) => set("address", v)} />
+      </div>
+      <Field label="Delivery Details" value={values.detail} onChange={(v) => set("detail", v)} placeholder="Apt, Floor, landmark (optional)" />
+      <div className="flex gap-3 pt-2">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="flex-1 rounded-2xl border border-zinc-200 bg-white px-5 py-3.5 text-sm font-bold text-zinc-700 hover:bg-zinc-50 transition-all active:scale-95"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          disabled={save.isPending}
+          className="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl bg-indigo-600 px-5 py-3.5 text-sm font-bold text-white shadow-lg shadow-indigo-100 transition-all hover:bg-indigo-700 active:scale-95 disabled:opacity-60"
+        >
+          <Save className="size-4" />
+          {save.isPending ? "Saving…" : "Save Changes"}
+        </button>
+      </div>
+    </form>
   );
 }
 

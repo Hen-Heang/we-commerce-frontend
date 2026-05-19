@@ -61,19 +61,19 @@ export function BottomNav() {
   return (
     <div
       className="fixed inset-x-0 bottom-0 z-50 px-4 pt-2 md:hidden pointer-events-none"
-      style={{ paddingBottom: "max(env(safe-area-inset-bottom, 12px), 16px)" }}
+      style={{ paddingBottom: "max(env(safe-area-inset-bottom, 12px), 20px)" }}
     >
       <nav
         aria-label="Primary"
         className="
           pointer-events-auto
           mx-auto max-w-lg
-          glass squircle-xl
+          glass-spatial squircle-xl
           relative
-          shadow-[0_8px_28px_-12px_rgba(0,0,0,0.12)]
+          shadow-[0_12px_40px_-12px_rgba(0,0,0,0.15)]
         "
       >
-        <ul className="relative flex items-stretch justify-around px-2 py-1.5">
+        <ul className="relative flex items-stretch justify-around px-2 py-2">
           {items.map(({ href, label, icon: Icon, badge, accent }) => {
             const active =
               pathname === href ||
@@ -85,7 +85,7 @@ export function BottomNav() {
               ? "text-primary"
               : accent
               ? "text-zinc-700"
-              : "text-zinc-500";
+              : "text-zinc-400";
 
             return (
               <li key={href} className="flex-1">
@@ -93,16 +93,19 @@ export function BottomNav() {
                   href={href}
                   aria-label={label}
                   aria-current={active ? "page" : undefined}
-                  className={`tap-bounce flex flex-col items-center gap-1 rounded-2xl px-1 py-1.5 transition-colors duration-200 ${color}`}
+                  className={`tap-bounce relative flex flex-col items-center gap-1.5 rounded-2xl px-1 py-1 transition-all duration-300 ${color}`}
                 >
+                  {active && (
+                    <span className="absolute -top-1 size-1 rounded-full bg-primary shadow-[0_0_8px_rgba(0,122,255,0.6)]" />
+                  )}
                   <span className="relative flex h-7 items-center justify-center">
                     <Icon
-                      className="size-[1.4rem]"
-                      strokeWidth={active ? 2.4 : 1.9}
+                      className={`size-[1.45rem] transition-transform duration-300 ${active ? "scale-110" : ""}`}
+                      strokeWidth={active ? 2.6 : 2}
                     />
                     {/* Cart count badge — flat, no fat ring */}
                     {label === "Cart" && mounted && (badge ?? 0) > 0 && (
-                      <span className="absolute -right-2 -top-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold leading-none text-white">
+                      <span className="absolute -right-2 -top-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold leading-none text-white shadow-sm">
                         {(badge ?? 0) > 99 ? "99+" : badge}
                       </span>
                     )}
@@ -110,13 +113,13 @@ export function BottomNav() {
                     {accent && !active && (
                       <span
                         aria-hidden
-                        className="absolute -right-1.5 -top-0.5 size-1.5 rounded-full bg-emerald-500"
+                        className="absolute -right-1.5 -top-0.5 size-1.5 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.4)]"
                       />
                     )}
                   </span>
                   <span
-                    className={`text-[10px] tracking-tight transition-all duration-200 ${
-                      active ? "font-semibold" : "font-medium"
+                    className={`text-[10px] tracking-tight transition-all duration-300 ${
+                      active ? "font-bold" : "font-medium"
                     }`}
                   >
                     {label}

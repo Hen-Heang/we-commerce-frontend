@@ -32,11 +32,15 @@ export default function MarketPage() {
 
 function MarketSkeleton() {
   return (
-    <div className="space-y-6">
-      <div className="h-10 w-full animate-pulse rounded-2xl bg-zinc-200" />
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="aspect-[3/4] animate-pulse rounded-2xl bg-zinc-200" />
+    <div className="space-y-8 page-fade-in">
+      <div className="h-12 w-full animate-pulse rounded-2xl bg-zinc-100 overflow-hidden relative">
+        <div className="absolute inset-0 animate-shimmer" />
+      </div>
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        {Array.from({ length: 10 }).map((_, i) => (
+          <div key={i} className="aspect-[4/5] animate-pulse rounded-[24px] bg-zinc-100 overflow-hidden relative">
+            <div className="absolute inset-0 animate-shimmer" />
+          </div>
         ))}
       </div>
     </div>
@@ -81,8 +85,8 @@ function MarketPageInner() {
     : "Discover";
 
   return (
-    <div className="space-y-10">
-      <div className="space-y-6">
+    <div className="space-y-12 page-fade-in">
+      <div className="space-y-8">
         <CategoryStrip active={category} onChange={setCategory} />
 
         {/* Popular strip only on default view */}
@@ -95,33 +99,33 @@ function MarketPageInner() {
       </div>
 
       <section>
-        <div className="mb-6 flex items-baseline justify-between">
-          <h2 className="text-3xl font-black tracking-tight text-zinc-950">{heading}</h2>
+        <div className="mb-8 flex items-baseline justify-between">
+          <h2 className="text-4xl font-black tracking-tight text-zinc-950">{heading}</h2>
           {!search && !category && (
-            <span className="text-sm font-semibold text-primary">See all</span>
+            <span className="text-sm font-bold text-primary hover:underline cursor-pointer">See all</span>
           )}
         </div>
 
-        {mainQuery.isLoading && <Grid skeletonCount={8} />}
+        {mainQuery.isLoading && <Grid skeletonCount={10} />}
 
         {mainQuery.isError && (
           <div className="squircle-lg bg-red-50/50 p-8 text-center ring-1 ring-red-100">
-            <p className="text-sm font-medium text-red-800">
+            <p className="text-sm font-semibold text-red-800">
               Couldn’t load products. Try again later.
             </p>
           </div>
         )}
 
         {!mainQuery.isLoading && products.length === 0 && (
-          <div className="squircle-lg bg-zinc-50/50 p-12 text-center ring-1 ring-zinc-100">
-            <p className="text-sm font-medium text-zinc-500">
+          <div className="squircle-lg bg-zinc-50/50 p-16 text-center ring-1 ring-zinc-100">
+            <p className="text-sm font-semibold text-zinc-500">
               No products found.
             </p>
           </div>
         )}
 
         {products.length > 0 && (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5">
+          <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5">
             {products.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
@@ -146,20 +150,22 @@ function PopularStrip({
 
   return (
     <section className="-mx-4 px-4 sm:mx-0 sm:px-0">
-      <div className="mb-4 flex items-center justify-between px-1">
+      <div className="mb-6 flex items-center justify-between px-1">
         <h2 className="text-2xl font-black tracking-tight text-zinc-950">Popular</h2>
-        <span className="rounded-full bg-orange-500/10 px-2 py-0.5 text-[10px] font-bold text-orange-600 uppercase tracking-wider">🔥 Trending</span>
+        <span className="rounded-full bg-orange-500/10 px-3 py-1 text-[10px] font-bold text-orange-600 uppercase tracking-wider shadow-sm">🔥 Trending</span>
       </div>
-      <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar scroll-fade-x">
+      <div className="flex gap-5 overflow-x-auto pb-6 no-scrollbar scroll-fade-x">
         {loading
-          ? Array.from({ length: 4 }).map((_, i) => (
+          ? Array.from({ length: 5 }).map((_, i) => (
               <div
                 key={i}
-                className="h-64 w-48 shrink-0 animate-pulse squircle-lg bg-zinc-200"
-              />
+                className="h-72 w-52 shrink-0 animate-pulse squircle-lg bg-zinc-100 overflow-hidden relative"
+              >
+                <div className="absolute inset-0 animate-shimmer" />
+              </div>
             ))
           : products.slice(0, 10).map((p) => (
-              <div key={p.id} className="w-48 shrink-0">
+              <div key={p.id} className="w-52 shrink-0">
                 <ProductCard product={p} />
               </div>
             ))}
@@ -170,12 +176,14 @@ function PopularStrip({
 
 function Grid({ skeletonCount }: { skeletonCount: number }) {
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
+    <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5">
       {Array.from({ length: skeletonCount }).map((_, i) => (
         <div
           key={i}
-          className="aspect-[3/4] animate-pulse rounded-2xl bg-zinc-200"
-        />
+          className="aspect-[4/5] animate-pulse rounded-[24px] bg-zinc-100 overflow-hidden relative"
+        >
+          <div className="absolute inset-0 animate-shimmer" />
+        </div>
       ))}
     </div>
   );

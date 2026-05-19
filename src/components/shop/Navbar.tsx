@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
+
 import { Search, Heart, User, Package } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
-import { isAuthenticated } from "@/lib/auth";
 import { CartNavLink } from "@/components/shop/CartNavLink";
 import { SearchOverlay } from "@/components/shop/SearchOverlay";
 import { ProfileMenu } from "@/components/shop/ProfileMenu";
@@ -40,14 +40,9 @@ const CENTER_LINKS: CenterLink[] = [
 
 export function Navbar() {
   const pathname = usePathname();
-  const [authed, setAuthed] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const profileAnchorRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    setAuthed(isAuthenticated());
-  }, []);
 
   function isActive(href: string, matchPrefix?: string) {
     const hrefPath = href.split("?")[0];
@@ -59,12 +54,12 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 glass border-b-0 shadow-[0_1px_0_rgba(0,0,0,0.05)]" style={{ paddingTop: "env(safe-area-inset-top)" }}>
+      <header className="sticky top-0 z-40 glass-spatial border-b-0" style={{ paddingTop: "env(safe-area-inset-top)" }}>
         <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:h-20 sm:px-6 lg:px-8">
           {/* LEFT — Brand */}
           <Link
             href="/market"
-            className="tap-bounce shrink-0 transition-transform"
+            className="tap-bounce shrink-0 transition-transform hover:scale-105"
           >
             <Logo className="text-2xl font-black tracking-tight" />
           </Link>
@@ -79,8 +74,8 @@ export function Navbar() {
                   href={href}
                   className={`relative rounded-full px-5 py-2 text-[15px] font-bold transition-all ${
                     active
-                      ? "bg-primary text-white shadow-md shadow-primary/20"
-                      : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+                      ? "bg-primary text-white shadow-lg shadow-primary/30"
+                      : "text-zinc-600 hover:bg-white/80 hover:text-zinc-900 hover:shadow-sm"
                   }`}
                 >
                   {label}
@@ -96,7 +91,7 @@ export function Navbar() {
               type="button"
               onClick={() => setSearchOpen(true)}
               aria-label="Search"
-              className="tap-bounce flex size-10 items-center justify-center rounded-full bg-zinc-100/50 text-zinc-700 transition-colors hover:bg-zinc-200"
+              className="tap-bounce flex size-10 items-center justify-center rounded-full bg-zinc-100/80 text-zinc-700 transition-all hover:bg-white hover:shadow-md"
             >
               <Search className="size-5" strokeWidth={2.5} />
             </button>
@@ -106,14 +101,14 @@ export function Navbar() {
               <Link
                 href="/saved"
                 aria-label="Saved"
-                className="tap-bounce flex size-10 items-center justify-center rounded-full bg-zinc-100/50 text-zinc-700 transition-colors hover:bg-zinc-200"
+                className="tap-bounce flex size-10 items-center justify-center rounded-full bg-zinc-100/80 text-zinc-700 transition-all hover:bg-white hover:shadow-md"
               >
                 <Heart className="size-5" strokeWidth={2.5} />
               </Link>
               <Link
                 href="/orders"
                 aria-label="My orders"
-                className="tap-bounce flex size-10 items-center justify-center rounded-full bg-zinc-100/50 text-zinc-700 transition-colors hover:bg-zinc-200"
+                className="tap-bounce flex size-10 items-center justify-center rounded-full bg-zinc-100/80 text-zinc-700 transition-all hover:bg-white hover:shadow-md"
               >
                 <Package className="size-5" strokeWidth={2.5} />
               </Link>
@@ -127,46 +122,27 @@ export function Navbar() {
             {/* Profile dropdown — desktop only */}
             <div className="relative hidden md:flex md:items-center md:gap-1.5">
               <span className="mx-1 h-8 w-px bg-zinc-200" aria-hidden />
-              {authed ? (
-                <button
-                  ref={profileAnchorRef}
-                  type="button"
-                  onClick={() => setProfileMenuOpen((v) => !v)}
-                  aria-label="Open profile menu"
-                  aria-expanded={profileMenuOpen}
-                  aria-haspopup="menu"
-                  className={`tap-bounce flex size-10 items-center justify-center rounded-full transition-all ${
-                    profileMenuOpen
-                      ? "bg-primary text-white shadow-lg shadow-primary/30"
-                      : "bg-zinc-100/50 text-zinc-700 hover:bg-zinc-200"
-                  }`}
-                >
-                  <User className="size-5" strokeWidth={2.5} />
-                </button>
-              ) : (
-                <Link
-                  href="/login"
-                  className="tap-bounce rounded-full bg-primary px-6 py-2.5 text-[15px] font-bold text-white shadow-lg shadow-primary/25 transition-all hover:bg-primary/90"
-                >
-                  Log in
-                </Link>
-              )}
+              <button
+                ref={profileAnchorRef}
+                type="button"
+                onClick={() => setProfileMenuOpen((v) => !v)}
+                aria-label="Open profile menu"
+                aria-expanded={profileMenuOpen}
+                aria-haspopup="menu"
+                className={`tap-bounce flex size-10 items-center justify-center rounded-full transition-all ${
+                  profileMenuOpen
+                    ? "bg-primary text-white shadow-lg shadow-primary/30"
+                    : "bg-zinc-100/50 text-zinc-700 hover:bg-zinc-200"
+                }`}
+              >
+                <User className="size-5" strokeWidth={2.5} />
+              </button>
               <ProfileMenu
                 open={profileMenuOpen}
                 onClose={() => setProfileMenuOpen(false)}
                 anchorRef={profileAnchorRef}
               />
             </div>
-
-            {/* Mobile login button when unauthenticated */}
-            {!authed && (
-              <Link
-                href="/login"
-                className="tap-bounce ml-2 rounded-full bg-primary px-4 py-2 text-xs font-bold text-white shadow-lg shadow-primary/20 md:hidden"
-              >
-                Log in
-              </Link>
-            )}
           </div>
         </div>
       </header>
