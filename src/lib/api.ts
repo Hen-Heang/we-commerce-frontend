@@ -58,6 +58,22 @@ function kickToLogin() {
   }
 }
 
+/**
+ * Logs out on the server (revokes all of the user's stored access/refresh
+ * tokens — see LogoutService on the backend) and always clears local tokens
+ * afterward, even if the network call fails, so the user isn't stuck
+ * "logged in" client-side.
+ */
+export async function logout(): Promise<void> {
+  try {
+    await api.post("/auth/logout");
+  } catch {
+    // best-effort — still proceed to clear the local session
+  } finally {
+    clearTokens();
+  }
+}
+
 /* ------------------------------------------------------------------ *
  * Shared retry logic — used by both success and error interceptors.  *
  * ------------------------------------------------------------------ */

@@ -14,8 +14,9 @@ import { saveTokens } from "@/lib/auth";
 import type { BaseResponse, AuthResponse, RegisterRequest } from "@/types/api";
 
 /**
- * Backend's RegisterRequest has 9 fields. For the portfolio UI we collect
- * the four genuinely required ones and send sensible defaults for the rest.
+ * Backend's RegisterRequest has 8 fields (role is server-assigned, not
+ * client-settable). For the portfolio UI we collect the four genuinely
+ * required ones and send sensible defaults for the rest.
  * (See AuthenticationService.register — it tolerates nulls for optional fields.)
  */
 const registerSchema = z.object({
@@ -53,7 +54,6 @@ export default function RegisterPage() {
         photoProfile: undefined,
         googleLink: undefined,
         maplink: undefined,
-        role: "USER",
       };
 
       const res = await api.post<BaseResponse<AuthResponse>>(

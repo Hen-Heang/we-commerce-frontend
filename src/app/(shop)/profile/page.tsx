@@ -13,6 +13,7 @@ import { fetchAllCategories, createProduct } from "@/lib/products";
 import { useCartStore } from "@/store/cartStore";
 import { useShopStore } from "@/store/shopStore";
 import { clearTokens } from "@/lib/auth";
+import { logout } from "@/lib/api";
 import { ConfirmDialog } from "@/components/shop/ConfirmDialog";
 import { SavedPaymentMethodsList } from "@/components/shop/SavedPaymentMethodsList";
 import type { UserProfile, UserProfileUpdate, ProductCreateRequest } from "@/types/api";
@@ -40,8 +41,8 @@ export default function ProfilePage() {
 
   /* ---------------- Logout ---------------- */
   const [logoutOpen, setLogoutOpen] = useState(false);
-  function handleLogout() {
-    clearTokens();
+  async function handleLogout() {
+    await logout();
     clearCart();
     queryClient.clear();
     toast.success("Logged out");

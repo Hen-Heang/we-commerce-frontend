@@ -26,15 +26,17 @@ The app falls back to mock data when the API is empty or unreachable, so it's de
 
 ## What's in here
 
-12 routes (auth, market, product detail, saved, collections, cart, checkout, orders, profile) with:
+16 routes (auth, market, product detail, saved, collections, cart, checkout, orders, profile, seller shop + onboarding) with:
 
 - JWT auth via Axios interceptor
 - TanStack Query for server state (with optimistic updates on bookmarks)
 - Zustand + persist for cart and saved payment methods
 - React Hook Form + Zod for forms
-- Responsive: desktop top nav + mobile bottom nav
+- Responsive: desktop top nav + iOS-style mobile bottom nav
 - Simulated ABA Pay / KHQR / Card payment sheets
 - Order history with status timeline
+- Seller Center: shop onboarding + public `/shop/[id]` storefront
+- Installable PWA (manifest + service worker, offline fallback page)
 
 ---
 
@@ -57,6 +59,7 @@ The app falls back to mock data when the API is empty or unreachable, so it's de
 | HTTP | Axios |
 | Icons | lucide-react |
 | Toasts | sonner |
+| PWA | Web app manifest + custom service worker (offline fallback) |
 
 ## Scripts
 

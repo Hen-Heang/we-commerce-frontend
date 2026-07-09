@@ -16,7 +16,8 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-import { clearTokens, isAuthenticated } from "@/lib/auth";
+import { isAuthenticated } from "@/lib/auth";
+import { logout } from "@/lib/api";
 import { useCartStore } from "@/store/cartStore";
 
 /**
@@ -76,8 +77,8 @@ export function ProfileMenu({
     return () => document.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  function handleLogout() {
-    clearTokens();
+  async function handleLogout() {
+    await logout();
     clearCart();
     queryClient.clear();
     onClose();

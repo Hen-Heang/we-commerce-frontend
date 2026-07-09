@@ -22,6 +22,7 @@ const loginSchema = z.object({
     .min(6, "Phone number is too short")
     .max(20, "Phone number is too long")
     .regex(/^\+?[0-9]+$/, "Digits only, optional leading +"),
+  password: z.string().min(1, "Password is required"),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -36,17 +37,18 @@ export default function LoginPage() {
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { phoneNumber: "" },
+    defaultValues: { phoneNumber: "", password: "" },
   });
 
   /* ---------------- Submit handler ---------------- */
   async function onSubmit(values: LoginFormValues) {
     setServerError(null);
     try {
-      // Backend route: POST /api/v1/auth/loginPhoneNumber/{phoneNumber}
-      // Note: phone is in the URL path, body is empty.
+      // Backend route: POST /api/v1/auth/loginPhoneNumber
+      // Phone + password go in the JSON body (PhoneLoginRequest), not the URL path.
       const res = await api.post<BaseResponse<AuthResponse>>(
-        `/auth/loginPhoneNumber/${encodeURIComponent(values.phoneNumber)}`
+        `/auth/loginPhoneNumber`,
+        { phoneNumber: values.phoneNumber, password: values.password }
       );
 
       // Unwrap the BaseResponse envelope.
@@ -60,9 +62,9 @@ export default function LoginPage() {
       router.push("/market"); // redirect to marketplace after login
     } catch (err) {
       const ax = err as AxiosError<BaseResponse<unknown>>;
-      // Backend currently returns 500 for unknown phone — show a friendly message.
+      // 401 on bad credentials, 404 if the phone number was never registered.
       setServerError(
-        ax.response?.data?.message ?? "Phone number not registered or server error"
+        ax.response?.data?.message ?? "Incorrect phone number or password"
       );
     }
   }
@@ -100,6 +102,30 @@ export default function LoginPage() {
           {errors.phoneNumber && (
             <p className="mt-2 text-sm font-bold text-red-600 ml-1">
               {errors.phoneNumber.message}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label
+            htmlFor="password"
+            className="mb-1.5 block text-sm font-bold text-zinc-900 ml-1"
+          >
+            Password
+          </label>
+          <div className="relative group">
+            <input
+              id="password"
+              type="password"
+              autoComplete="current-password"
+              placeholder="Enter your password"
+              {...register("password")}
+              className="w-full rounded-2xl border border-zinc-300 bg-white px-5 py-4 text-base text-zinc-950 placeholder:text-zinc-400 outline-none ring-indigo-500/20 transition-all focus:border-indigo-600 focus:ring-4"
+            />
+          </div>
+          {errors.password && (
+            <p className="mt-2 text-sm font-bold text-red-600 ml-1">
+              {errors.password.message}
             </p>
           )}
         </div>

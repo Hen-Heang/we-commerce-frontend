@@ -27,7 +27,6 @@ export interface RegisterRequest {
   phoneNumber: string;
   address?: string;
   photoProfile?: string;
-  role?: "USER" | "ADMIN";
   googleLink?: string;
   maplink?: string;
 }
