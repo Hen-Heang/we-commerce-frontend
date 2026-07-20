@@ -16,12 +16,19 @@ import type { BaseResponse, AuthResponse } from "@/types/api";
 /* ---------------- Form schema ---------------- */
 // Zod = runtime validation + auto-derived TS types.
 // Java analogy: like Bean Validation (@NotBlank, @Pattern) but also gives us types for free.
+const PHONE_RE = /^\+?[0-9]{6,20}$/;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const loginSchema = z.object({
-  phoneNumber: z
+  // Accepts either a phone number or an email — backend tries phone first,
+  // then falls back to email (see PhoneLoginRequest.identifier).
+  identifier: z
     .string()
-    .min(6, "Phone number is too short")
-    .max(20, "Phone number is too long")
-    .regex(/^\+?[0-9]+$/, "Digits only, optional leading +"),
+    .min(3, "Enter your phone number or email")
+    .refine(
+      (v) => PHONE_RE.test(v) || EMAIL_RE.test(v),
+      "Enter a valid phone number or email address"
+    ),
   password: z.string().min(1, "Password is required"),
 });
 
@@ -37,7 +44,7 @@ export default function LoginPage() {
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { phoneNumber: "", password: "" },
+    defaultValues: { identifier: "", password: "" },
   });
 
   /* ---------------- Submit handler ---------------- */
@@ -45,10 +52,12 @@ export default function LoginPage() {
     setServerError(null);
     try {
       // Backend route: POST /api/v1/auth/loginPhoneNumber
-      // Phone + password go in the JSON body (PhoneLoginRequest), not the URL path.
+      // `identifier` (phone or email) + password go in the JSON body
+      // (PhoneLoginRequest), not the URL path. The path name is legacy —
+      // the backend now accepts either identifier type on this route.
       const res = await api.post<BaseResponse<AuthResponse>>(
         `/auth/loginPhoneNumber`,
-        { phoneNumber: values.phoneNumber, password: values.password }
+        { identifier: values.identifier, password: values.password }
       );
 
       // Unwrap the BaseResponse envelope.
@@ -62,9 +71,9 @@ export default function LoginPage() {
       router.push("/market"); // redirect to marketplace after login
     } catch (err) {
       const ax = err as AxiosError<BaseResponse<unknown>>;
-      // 401 on bad credentials, 404 if the phone number was never registered.
+      // 401 on bad credentials, 404 if the identifier was never registered.
       setServerError(
-        ax.response?.data?.message ?? "Incorrect phone number or password"
+        ax.response?.data?.message ?? "Incorrect phone number/email or password"
       );
     }
   }
@@ -83,25 +92,25 @@ export default function LoginPage() {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div>
           <label
-            htmlFor="phoneNumber"
+            htmlFor="identifier"
             className="mb-1.5 block text-sm font-bold text-zinc-900 ml-1"
           >
-            Phone number
+            Phone number or email
           </label>
           <div className="relative group">
             <input
-              id="phoneNumber"
-              type="tel"
-              inputMode="tel"
-              autoComplete="tel"
-              placeholder="+855 12 345 678"
-              {...register("phoneNumber")}
+              id="identifier"
+              type="text"
+              inputMode="email"
+              autoComplete="username"
+              placeholder="+855 12 345 678 or you@example.com"
+              {...register("identifier")}
               className="w-full rounded-2xl border border-zinc-300 bg-white px-5 py-4 text-base text-zinc-950 placeholder:text-zinc-400 outline-none ring-indigo-500/20 transition-all focus:border-indigo-600 focus:ring-4"
             />
           </div>
-          {errors.phoneNumber && (
+          {errors.identifier && (
             <p className="mt-2 text-sm font-bold text-red-600 ml-1">
-              {errors.phoneNumber.message}
+              {errors.identifier.message}
             </p>
           )}
         </div>
@@ -141,7 +150,7 @@ export default function LoginPage() {
           disabled={isSubmitting}
           className="w-full rounded-2xl bg-indigo-600 px-6 py-4 text-lg font-bold text-white shadow-xl shadow-indigo-100 transition-all hover:bg-indigo-700 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:hover:scale-100"
         >
-          {isSubmitting ? "Signing in..." : "Continue with Phone"}
+          {isSubmitting ? "Signing in..." : "Continue"}
         </button>
       </form>
 
